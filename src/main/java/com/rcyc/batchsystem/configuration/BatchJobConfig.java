@@ -24,9 +24,9 @@ public class BatchJobConfig {
     }
 
     @Bean
-    public Job itineraryJob(JobBuilderFactory jobBuilderFactory, Step portStep) {
+    public Job itineraryJob(JobBuilderFactory jobBuilderFactory, Step itineraryStep) {
         return jobBuilderFactory.get("itineraryJob")
-                .start(portStep)
+                .start(itineraryStep)
                 .build();
     }
 

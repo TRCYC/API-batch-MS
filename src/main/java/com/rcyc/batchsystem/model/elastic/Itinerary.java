@@ -16,8 +16,7 @@ public class Itinerary {
     private long date;
     private String eventId;
     private int depTimeZone;
-    private int currentItineraryCount;
-    private List<ItineraryProcessFinished> itinerary_process_finished;
+    private int currentItineraryCount; 
     private int id;
     private String enabled;
     private String type;
@@ -58,8 +57,6 @@ public class Itinerary {
     public void setDepTimeZone(int depTimeZone) { this.depTimeZone = depTimeZone; }
     public int getCurrentItineraryCount() { return currentItineraryCount; }
     public void setCurrentItineraryCount(int currentItineraryCount) { this.currentItineraryCount = currentItineraryCount; }
-    public List<ItineraryProcessFinished> getItinerary_process_finished() { return itinerary_process_finished; }
-    public void setItinerary_process_finished(List<ItineraryProcessFinished> itinerary_process_finished) { this.itinerary_process_finished = itinerary_process_finished; }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getEnabled() { return enabled; }
