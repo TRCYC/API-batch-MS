@@ -1,0 +1,67 @@
+package com.rcyc.batchsystem.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.rcyc.batchsystem.service.ElasticService;
+
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@RestController
+@RequestMapping("/api")
+public class BatchController {
+
+    @Autowired
+    private ElasticService elasticService;
+
+     @Autowired
+    private JobLauncher jobLauncher;
+
+   
+    @Autowired
+    private Job regionJob;
+    @Autowired
+    private Job portJob;
+    @Autowired
+    private Job itineraryJob;
+
+    @GetMapping("/region")
+    public String getMethodName() {
+        elasticService.getRegionData();
+        return new String("Region");
+    }
+
+     @GetMapping("/run-region-job")
+    public String runRegionJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(regionJob, params);
+        return "Region job triggered!";
+    }
+
+    @GetMapping("/run-port-job")
+    public String runPortJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(portJob, params);
+        return "Port job triggered!";
+    }
+
+    @GetMapping("/run-itinerary-job")
+    public String itineraryJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(itineraryJob, params);
+        return "Itinerary job triggered!";
+    }
+
+}
