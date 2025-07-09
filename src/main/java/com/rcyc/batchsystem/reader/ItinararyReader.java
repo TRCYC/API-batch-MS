@@ -52,13 +52,14 @@ public class ItinararyReader implements ItemReader<DefaultPayLoad<Itinerary, Obj
         List<FeedDateRangeEntity> dateRanges = feedDateRangeRepository.findByType("ITR")   ;  
         ResListLocation pLocations =  rescoClient.getAllPorts("P");
         ResListLocation oLocations =  rescoClient.getAllPorts("O");
-        List<Location> locations = pLocations.getLocationList().getLocations();
-        locations.addAll(oLocations.getLocationList().getLocations());
+        
         ResListEvent resListEvent = rescoClient.getAllVoyages();
+
         List<com.rcyc.batchsystem.model.resco.Itinerary> itineraries = getItinerariesByVoyages(resListEvent.getEventList(),dateRanges.get(0));
         Map<String,Object> itineraryMap =new HashMap<>();
 
-        itineraryMap.put("PORTS", locations);
+        itineraryMap.put("P_TYPE_PORTS", pLocations.getLocationList().getLocations());
+        itineraryMap.put("O_TYPE_PORTS", oLocations.getLocationList().getLocations());
         itineraryMap.put("VOYAGES", resListEvent.getEventList());
         itineraryMap.put("ITINERARIES", itineraries);
 
@@ -67,10 +68,13 @@ public class ItinararyReader implements ItemReader<DefaultPayLoad<Itinerary, Obj
 
     private List<com.rcyc.batchsystem.model.resco.Itinerary> getItinerariesByVoyages(List<EventDetail> eventList,FeedDateRangeEntity dateRangeEntity) {
         List<com.rcyc.batchsystem.model.resco.Itinerary> rescoItineraryList = new ArrayList<>();
+        int counter =0;
         for(EventDetail eventDetail : eventList){
+            System.out.println(eventDetail.getEventId());
             if(eventDetail!=null && eventDetail.getBegDate()!=null && dateRangeEntity.isBegDateOnOrAfterStartAt(eventDetail.getBegDate())){
                 ResListItinerary listItinerary = rescoClient.getAllItineraryByEvent(Long.valueOf(eventDetail.getEventId()));
                 rescoItineraryList.addAll(listItinerary.getItineraryList());
+                System.out.println(counter++);
             }
         }
         return rescoItineraryList;

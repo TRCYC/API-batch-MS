@@ -1,6 +1,7 @@
 package com.rcyc.batchsystem.process;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.batch.item.ItemProcessor;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.elastic.Itinerary;
+import com.rcyc.batchsystem.model.resco.Location;
 import com.rcyc.batchsystem.model.resco.ResListItenarary;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -25,8 +27,13 @@ public class ItineraryProcess {
                 Map<String, Object> map = (Map<String, Object>) item.getReader();
                 List<com.rcyc.batchsystem.model.resco.Itinerary> itineraries = (List<com.rcyc.batchsystem.model.resco.Itinerary>) map
                         .get("ITINERARIES");
-                if (!itineraries.isEmpty()) {
-
+                        List<Location> ptypList = (List<Location>) map.get("P_TYPE_PORTS");
+                        List<Location> otypList = (List<Location>) map.get("O_TYPE_PORTS");
+                        List<Itinerary> processedList = null;
+                 if (!itineraries.isEmpty()) {
+                    processedList = itineraries.stream()
+                        .map(rescoItinerary -> getAsItinerary(rescoItinerary, ptypList, otypList))
+                        .collect(Collectors.toList());
                 }
                 item.setResponse(processedList);
             }
@@ -34,23 +41,25 @@ public class ItineraryProcess {
         };
     }
 
-    private Itinerary getAsItinerary(com.rcyc.batchsystem.model.resco.Itinerary rescoItinerary) {
+    private Itinerary getAsItinerary(com.rcyc.batchsystem.model.resco.Itinerary rescoItinerary,List<Location> ptypList,List<Location> otypList) {
         Itinerary itineraryEs = new Itinerary();
-        itineraryEs.setId(rescoItinerary.getEventId());
-        itineraryEs.setFacilityId(rescoItinerary.getFacilityId());
+        itineraryEs.setId(rescoItinerary.getEventId() != null ? rescoItinerary.getEventId().intValue() : 0);
+        itineraryEs.setFacilityId(rescoItinerary.getFacilityId() != null ? rescoItinerary.getFacilityId().toString() : "");
         itineraryEs.setPortCode(rescoItinerary.getLocation());
         itineraryEs.setDepDateStr(rescoItinerary.getDepDate());
         itineraryEs.setArrDateStr(rescoItinerary.getArrDate());
-        itineraryEs.setDepTimeZone(rescoItinerary.getDepTimeZone());
-        itineraryEs.setArrTimeZone(rescoItinerary.getArrTimeZone());
-        itineraryEs.setEnabled(rescoItinerary.getEnabled());
+        itineraryEs.setDepTimeZone(rescoItinerary.getDepTimeZone() != null ? rescoItinerary.getDepTimeZone().intValue() : 0);
+        itineraryEs.setArrTimeZone(rescoItinerary.getArrTimeZone() != null ? rescoItinerary.getArrTimeZone().intValue() : 0);
+        itineraryEs.setEnabled(String.valueOf(rescoItinerary.getEnabled()));
         itineraryEs.setComment(null);
         itineraryEs.setType(rescoItinerary.getType());
         itineraryEs.setDepPosition(rescoItinerary.getDepPosition());
         itineraryEs.setArrPosition(rescoItinerary.getArrPosition());
         if (itineraryEs.getDepDateStr() != null) {
             String depDateStr = itineraryEs.getDepDateStr();
-            LocalDate depDate = LocalDate.parse(depDateStr);
+            // Extract date part only (before 'T' if present)
+            String dateOnly = depDateStr.split("T")[0];
+            LocalDate depDate = LocalDate.parse(dateOnly);
             long departureTime = depDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
             itineraryEs.setDepartureTime(departureTime);
 
@@ -60,7 +69,9 @@ public class ItineraryProcess {
         }
         if (itineraryEs.getArrDateStr() != null) {
             String arrDateStr = itineraryEs.getArrDateStr();
-            LocalDate arrDate = LocalDate.parse(arrDateStr);
+            // Extract date part only (before 'T' if present)
+            String dateOnly = arrDateStr.split("T")[0];
+            LocalDate arrDate = LocalDate.parse(dateOnly);
             long arrivalTime = arrDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
             itineraryEs.setArrivalTime(arrivalTime);
 
@@ -69,12 +80,16 @@ public class ItineraryProcess {
 
         }
 
-        if (itineraryEs.getArrTimeZone() != null && itineraryEs.getDepartureTime()!=null) {
+        if (itineraryEs.getArrTimeZone() !=0 && itineraryEs.getDepartureTime()!=0) {
             String arrDateStr = itineraryEs.getArrDateStr(); // e.g., "2020-06-14"
             String depDateStr = itineraryEs.getDepDateStr(); // e.g., "2020-06-10"
 
-            LocalDate arrDate = LocalDate.parse(arrDateStr);
-            LocalDate depDate = LocalDate.parse(depDateStr);
+            // Extract date part only (before 'T' if present)
+            String arrDateOnly = arrDateStr.split("T")[0];
+            String depDateOnly = depDateStr.split("T")[0];
+
+            LocalDate arrDate = LocalDate.parse(arrDateOnly);
+            LocalDate depDate = LocalDate.parse(depDateOnly);
 
             long night = ChronoUnit.DAYS.between(depDate, arrDate); // (arrDate - depDate)
             itineraryEs.setNight((int) night);
@@ -94,7 +109,20 @@ public class ItineraryProcess {
         }else
              itineraryEs.setDayType("Port Day");
 
-
+        if(!itineraryEs.getType().equals("SS")){
+            Location portLocation = Location.findFirstByCode(ptypList, itineraryEs.getPortCode());
+            if (portLocation != null && portLocation.getName() != null) {
+                String portName = portLocation.getName();
+                itineraryEs.setPortName(portName);
+            }else{
+                portLocation = Location.findFirstByCode(otypList, itineraryEs.getPortCode());
+                if (portLocation != null && portLocation.getName() != null) {
+                    String portName = portLocation.getName();
+                    itineraryEs.setPortName(portName);
+                }
+            }
+            
+        }
 
         return itineraryEs;
     }

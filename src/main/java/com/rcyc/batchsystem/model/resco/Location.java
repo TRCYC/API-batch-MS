@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Location")
@@ -57,4 +58,32 @@ public class Location {
     public void setTimeZone(String timeZone) { this.timeZone = timeZone; }
     public int getEnabled() { return enabled; }
     public void setEnabled(int enabled) { this.enabled = enabled; }
+
+    /**
+     * Filters a list of locations to find the first one matching the given port code
+     * @param locationList the list of locations to search
+     * @param portCode the port code to match
+     * @return the first matching location, or null if not found
+     */
+    public static Location findFirstByCode(List<Location> locationList, String portCode) {
+        if (locationList == null || portCode == null) {
+            return null;
+        }
+        
+        return locationList.stream()
+                .filter(location -> portCode.equals(location.getCode()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locationId=" + locationId +
+                ", code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", enabled=" + enabled +
+                '}';
+    }
 }

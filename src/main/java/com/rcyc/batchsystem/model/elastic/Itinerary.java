@@ -7,6 +7,7 @@ public class Itinerary {
     private String facilityId;
     private String arrDateStr;
     private long arrivalTime;
+    private long departureTime;
     private int totalCount;
     private String createdDate;
     private String voyageNumber;
@@ -28,6 +29,8 @@ public class Itinerary {
     private String depPosition;
     private String day;
     private String arrPosition;
+    private int night;
+    
 
     public int getTotalItineraryCount() { return totalItineraryCount; }
     public void setTotalItineraryCount(int totalItineraryCount) { this.totalItineraryCount = totalItineraryCount; }
@@ -79,10 +82,23 @@ public class Itinerary {
     public void setDay(String day) { this.day = day; }
     public String getArrPosition() { return arrPosition; }
     public void setArrPosition(String arrPosition) { this.arrPosition = arrPosition; }
-
+        
     public static class ItineraryProcessFinished {
         private int audit_id;
         public int getAudit_id() { return audit_id; }
         public void setAudit_id(int audit_id) { this.audit_id = audit_id; }
+    }
+
+    public int getNight() {
+        return night;
+    }
+    public void setNight(int night) {
+        this.night = night;
+    }
+    public long getDepartureTime() {
+        return departureTime;
+    }
+    public void setDepartureTime(long departureTime) {
+        this.departureTime = departureTime;
     }
 } 

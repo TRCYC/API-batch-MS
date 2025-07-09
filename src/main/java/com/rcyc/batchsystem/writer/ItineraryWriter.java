@@ -17,13 +17,13 @@ public class ItineraryWriter implements ItemWriter<DefaultPayLoad<Itinerary, Obj
 
     @Override
     public void write(List<? extends DefaultPayLoad<Itinerary, Object, Itinerary>> items) throws Exception {
-        //elasticService.createTempIndex("itinerary_demo");
-        //elasticService.truncateIndexData("itinerary_demo");
+        elasticService.createTempIndex("itinerary_demo");
+        elasticService.truncateIndexData("itinerary_demo");
         for (DefaultPayLoad<Itinerary, Object, Itinerary> payload : items) {
             List<Itinerary> itineraryList = payload.getResponse();
             System.out.println(itineraryList.size());
             if (itineraryList != null && !itineraryList.isEmpty()) {
-                //elasticService.bulkInsertItineraries(itineraryList, "itinerary_demo");
+                elasticService.bulkInsertItineraries(itineraryList, "itinerary_demo");
             }
         }
     }
