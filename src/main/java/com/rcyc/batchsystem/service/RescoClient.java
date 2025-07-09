@@ -52,6 +52,17 @@ public class RescoClient {
         return resListEvent;
     }
 
+    public ResListEvent getHotels(ReqListEvent reqListEvent) {
+        System.out.println("Resco calling For Hotel");
+        ResListEvent resListEvent = restTemplate.postForObject(
+            "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+            reqListEvent,
+            ResListEvent.class
+        );
+        System.out.println("Resco response completed >> "+resListEvent.getEventList().size());
+        return resListEvent;
+    }
+
     public ResListItinerary getAllItineraryByEvent(Long eventId){ 
         ReqListItinerary reqListItinerary = new ReqListItinerary();
         reqListItinerary.setUser(getUser());

@@ -129,6 +129,32 @@ public class ElasticService {
         }
     }
 
+    public void bulkInsertHotels(List<com.rcyc.batchsystem.model.elastic.Hotel> hotels, String indexName)
+            throws IOException {
+        BulkRequest.Builder br = new BulkRequest.Builder();
+
+        for (com.rcyc.batchsystem.model.elastic.Hotel hotel : hotels) {
+            br.operations(op -> op
+                    .index(idx -> idx
+                            .index(indexName)
+                            .id(String.valueOf(hotel.getEventId())) // optional, can be auto-generated
+                            .document(hotel)));
+        }
+
+        BulkResponse result = client.bulk(br.build());
+
+        if (result.errors()) {
+            System.out.println("Bulk had errors");
+            result.items().forEach(item -> {
+                if (item.error() != null) {
+                    System.out.println(item.error().reason());
+                }
+            });
+        } else {
+            System.out.println("Bulk insert successful");
+        }
+    }
+
     public void createTempIndex(String indexName) throws Exception {
         if (!indexExists(indexName)) {
             createNewIndex(indexName);

@@ -30,4 +30,11 @@ public class BatchJobConfig {
                 .build();
     }
 
+    @Bean
+    public Job hotelJob(JobBuilderFactory jobBuilderFactory, Step hotelStep) {
+        return jobBuilderFactory.get("hotelJob")
+                .start(hotelStep)
+                .build();
+    }
+
 }
