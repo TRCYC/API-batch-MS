@@ -7,6 +7,7 @@ public class Itinerary {
     private String facilityId;
     private String arrDateStr;
     private long arrivalTime;
+    private long departureTime;
     private int totalCount;
     private String createdDate;
     private String voyageNumber;
@@ -16,8 +17,7 @@ public class Itinerary {
     private long date;
     private String eventId;
     private int depTimeZone;
-    private int currentItineraryCount;
-    private List<ItineraryProcessFinished> itinerary_process_finished;
+    private int currentItineraryCount; 
     private int id;
     private String enabled;
     private String type;
@@ -29,6 +29,8 @@ public class Itinerary {
     private String depPosition;
     private String day;
     private String arrPosition;
+    private int night;
+    
 
     public int getTotalItineraryCount() { return totalItineraryCount; }
     public void setTotalItineraryCount(int totalItineraryCount) { this.totalItineraryCount = totalItineraryCount; }
@@ -58,8 +60,6 @@ public class Itinerary {
     public void setDepTimeZone(int depTimeZone) { this.depTimeZone = depTimeZone; }
     public int getCurrentItineraryCount() { return currentItineraryCount; }
     public void setCurrentItineraryCount(int currentItineraryCount) { this.currentItineraryCount = currentItineraryCount; }
-    public List<ItineraryProcessFinished> getItinerary_process_finished() { return itinerary_process_finished; }
-    public void setItinerary_process_finished(List<ItineraryProcessFinished> itinerary_process_finished) { this.itinerary_process_finished = itinerary_process_finished; }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getEnabled() { return enabled; }
@@ -82,10 +82,23 @@ public class Itinerary {
     public void setDay(String day) { this.day = day; }
     public String getArrPosition() { return arrPosition; }
     public void setArrPosition(String arrPosition) { this.arrPosition = arrPosition; }
-
+        
     public static class ItineraryProcessFinished {
         private int audit_id;
         public int getAudit_id() { return audit_id; }
         public void setAudit_id(int audit_id) { this.audit_id = audit_id; }
+    }
+
+    public int getNight() {
+        return night;
+    }
+    public void setNight(int night) {
+        this.night = night;
+    }
+    public long getDepartureTime() {
+        return departureTime;
+    }
+    public void setDepartureTime(long departureTime) {
+        this.departureTime = departureTime;
     }
 } 

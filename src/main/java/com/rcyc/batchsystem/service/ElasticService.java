@@ -103,6 +103,32 @@ public class ElasticService {
         }
     }
 
+    public void bulkInsertItineraries(List<com.rcyc.batchsystem.model.elastic.Itinerary> itineraries, String indexName)
+            throws IOException {
+        BulkRequest.Builder br = new BulkRequest.Builder();
+
+        for (com.rcyc.batchsystem.model.elastic.Itinerary itinerary : itineraries) {
+            br.operations(op -> op
+                    .index(idx -> idx
+                            .index(indexName)
+                            .id(String.valueOf(itinerary.getId())) // optional, can be auto-generated
+                            .document(itinerary)));
+        }
+
+        BulkResponse result = client.bulk(br.build());
+
+        if (result.errors()) {
+            System.out.println("Bulk had errors");
+            result.items().forEach(item -> {
+                if (item.error() != null) {
+                    System.out.println(item.error().reason());
+                }
+            });
+        } else {
+            System.out.println("Bulk insert successful");
+        }
+    }
+
     public void createTempIndex(String indexName) throws Exception {
         if (!indexExists(indexName)) {
             createNewIndex(indexName);
