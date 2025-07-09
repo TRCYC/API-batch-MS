@@ -20,6 +20,8 @@ import com.rcyc.batchsystem.model.resco.ResListItenarary;
 import com.rcyc.batchsystem.model.resco.ResListItinerary;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.model.resco.User;
+import com.rcyc.batchsystem.model.resco.ReqListCategory;
+import com.rcyc.batchsystem.model.resco.ResListCategory;
 
 @Service
 public class RescoClient {
@@ -42,11 +44,11 @@ public class RescoClient {
         return response;
     }
 
-    public ResListEvent getAllVoyages(){
+    public ResListEvent getAllVoyages(int disabled){
         ReqListEvent reqListEvent = new ReqListEvent();
         reqListEvent.setUser(getUser());
         reqListEvent.setAvailability(new Availability(0));
-        reqListEvent.setEvent(new Event(0));
+        reqListEvent.setEvent(new Event(disabled));
         reqListEvent.setFacility(new Facility("O"));
         ResListEvent resListEvent= restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListEvent, ResListEvent.class);
         return resListEvent;
@@ -70,6 +72,26 @@ public class RescoClient {
         ResListItinerary response =  restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListItinerary, ResListItinerary.class);
          System.out.println(response.toString());
         return response;
+    }
+
+    public ResListCategory getSuiteByCurrency(String currencyType, String eventId, int surcharges) {
+        ReqListCategory req = new ReqListCategory();
+        ReqListCategory.Agency agency = new ReqListCategory.Agency();
+        agency.setAgentId("40622"); // Replace with actual agent id or inject as needed
+        ReqListCategory.Category category = new ReqListCategory.Category();
+        category.setEventId(eventId);
+        ReqListCategory.Rate rate = new ReqListCategory.Rate();
+        rate.setCurrency(currencyType);
+        rate.setSurcharges(surcharges);
+        req.setUser(getUser());
+        req.setAgency(agency);
+        req.setCategory(category);
+        req.setRate(rate);
+        return restTemplate.postForObject(
+            "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+            req,
+            ResListCategory.class
+        );
     }
 
     private User getUser(){
