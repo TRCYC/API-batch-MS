@@ -30,6 +30,8 @@ public class BatchController {
     private Job portJob;
     @Autowired
     private Job itineraryJob;
+    @Autowired
+    private Job hotelJob;
 
     @GetMapping("/region")
     public String getMethodName() {
@@ -62,6 +64,15 @@ public class BatchController {
                 .toJobParameters();
         jobLauncher.run(itineraryJob, params);
         return "Itinerary job triggered!";
+    }
+
+    @GetMapping("/run-hotel-job")
+    public String hotelJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(hotelJob, params);
+        return "Hotel job triggered!";
     }
 
 }

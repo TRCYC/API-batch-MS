@@ -64,7 +64,8 @@ public class EventDetail {
     @XmlElementWrapper(name = "RegionList")
     @XmlElement(name = "Region")
     private List<Region> regionList;
-
+    @XmlElement(name = "Comments")
+    private String comments; 
     public EventDetail() {}
 
     public int getEventId() {
@@ -273,6 +274,14 @@ public class EventDetail {
 
     public void setRegionList(List<Region> regionList) {
         this.regionList = regionList;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     } 
 
     
