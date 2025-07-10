@@ -37,4 +37,10 @@ public class BatchJobConfig {
                 .build();
     }
 
+    @Bean
+    public Job transferJob(JobBuilderFactory jobBuilderFactory, Step hotelStep) {
+        return jobBuilderFactory.get("transferJob")
+                .start(hotelStep)
+                .build();
+    }
 }
