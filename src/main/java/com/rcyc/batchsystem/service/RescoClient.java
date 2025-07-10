@@ -87,6 +87,20 @@ public class RescoClient {
         req.setAgency(agency);
         req.setCategory(category);
         req.setRate(rate);
+
+        // Get raw response as String
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        org.springframework.http.HttpEntity<ReqListCategory> entity = new org.springframework.http.HttpEntity<>(req, headers);
+        org.springframework.http.ResponseEntity<String> rawResponse = restTemplate.exchange(
+            "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+            org.springframework.http.HttpMethod.POST,
+            entity,
+            String.class
+        );
+        System.out.println("Raw response body: " + rawResponse.getBody());
+
+        // Convert to ResListCategory as before
         return restTemplate.postForObject(
             "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
             req,

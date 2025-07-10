@@ -6,6 +6,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
+import com.rcyc.batchsystem.model.resco.Rate;
+import com.rcyc.batchsystem.model.resco.TravelerFee;
+import com.rcyc.batchsystem.model.resco.Surcharge;
 
 @XmlRootElement(name = "ResListCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,7 +39,10 @@ public class ResListCategory {
         private int regularCapacity;
         @XmlElement(name = "AvailUnits")
         private int availUnits;
-        // Add RateList and other fields as needed
+        @XmlElementWrapper(name = "RateList")
+        @XmlElement(name = "Rate")
+        private List<Rate> rateList;
+
         public String getCategoryId() { return categoryId; }
         public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
         public String getCode() { return code; }
@@ -51,5 +57,7 @@ public class ResListCategory {
         public void setRegularCapacity(int regularCapacity) { this.regularCapacity = regularCapacity; }
         public int getAvailUnits() { return availUnits; }
         public void setAvailUnits(int availUnits) { this.availUnits = availUnits; }
+        public List<Rate> getRateList() { return rateList; }
+        public void setRateList(List<Rate> rateList) { this.rateList = rateList; }
     }
 } 
