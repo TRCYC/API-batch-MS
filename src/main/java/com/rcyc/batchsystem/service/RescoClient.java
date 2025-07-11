@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.rcyc.batchsystem.model.resco.Agency;
 import com.rcyc.batchsystem.model.resco.Availability;
+import com.rcyc.batchsystem.model.resco.Category;
 import com.rcyc.batchsystem.model.resco.Dictionary;
 import com.rcyc.batchsystem.model.resco.Event;
 import com.rcyc.batchsystem.model.resco.Facility;
 import com.rcyc.batchsystem.model.resco.Itinerary;
 import com.rcyc.batchsystem.model.resco.Location;
+import com.rcyc.batchsystem.model.resco.Rate;
 import com.rcyc.batchsystem.model.resco.ReqListDictionary;
 import com.rcyc.batchsystem.model.resco.ReqListEvent;
 import com.rcyc.batchsystem.model.resco.ReqListItinerary;
@@ -75,32 +78,20 @@ public class RescoClient {
     }
 
     public ResListCategory getSuiteByCurrency(String currencyType, String eventId, int surcharges) {
+        System.out.println("Currency >> "+currencyType + " Event >>"+eventId);
         ReqListCategory req = new ReqListCategory();
-        ReqListCategory.Agency agency = new ReqListCategory.Agency();
+        Agency agency = new Agency();
         agency.setAgentId("40622"); // Replace with actual agent id or inject as needed
-        ReqListCategory.Category category = new ReqListCategory.Category();
+        Category category = new Category();
         category.setEventId(eventId);
-        ReqListCategory.Rate rate = new ReqListCategory.Rate();
+        Rate rate = new Rate();
         rate.setCurrency(currencyType);
         rate.setSurcharges(surcharges);
         req.setUser(getUser());
         req.setAgency(agency);
         req.setCategory(category);
         req.setRate(rate);
-
-        // Get raw response as String
-        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        org.springframework.http.HttpEntity<ReqListCategory> entity = new org.springframework.http.HttpEntity<>(req, headers);
-        org.springframework.http.ResponseEntity<String> rawResponse = restTemplate.exchange(
-            "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
-            org.springframework.http.HttpMethod.POST,
-            entity,
-            String.class
-        );
-        System.out.println("Raw response body: " + rawResponse.getBody());
-
-        // Convert to ResListCategory as before
+ 
         return restTemplate.postForObject(
             "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
             req,

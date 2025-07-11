@@ -26,6 +26,10 @@ public class Rate {
     private String priceCurrency;
     @XmlElement(name = "Price")
     private String price;
+    @XmlElement(name = "Currency")
+    private String currency;
+    @XmlElement(name = "Surcharges")
+    private int surcharges;
 
     public String getRateId() { return rateId; }
     public void setRateId(String rateId) { this.rateId = rateId; }
@@ -45,4 +49,17 @@ public class Rate {
     public void setPriceCurrency(String priceCurrency) { this.priceCurrency = priceCurrency; }
     public String getPrice() { return price; }
     public void setPrice(String price) { this.price = price; }
+    public String getCurrency() {
+        return currency;
+    }
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+    public int getSurcharges() {
+        return surcharges;
+    }
+    public void setSurcharges(int surcharges) {
+        this.surcharges = surcharges;
+    }
+    
 } 

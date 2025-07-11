@@ -37,4 +37,11 @@ public class BatchJobConfig {
                 .build();
     }
 
+    @Bean
+    public Job pricingJob(JobBuilderFactory jobBuilderFactory, Step pricingStep) {
+        return jobBuilderFactory.get("pricingJob")
+                .start(pricingStep)
+                .build();
+    }
+
 }

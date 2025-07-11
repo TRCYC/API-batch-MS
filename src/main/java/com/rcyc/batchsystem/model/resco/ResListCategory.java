@@ -9,6 +9,7 @@ import java.util.List;
 import com.rcyc.batchsystem.model.resco.Rate;
 import com.rcyc.batchsystem.model.resco.TravelerFee;
 import com.rcyc.batchsystem.model.resco.Surcharge;
+import com.rcyc.batchsystem.model.resco.Category;
 
 @XmlRootElement(name = "ResListCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,46 +19,16 @@ public class ResListCategory {
     @XmlElementWrapper(name = "CategoryList")
     @XmlElement(name = "Category")
     private List<Category> categoryList;
+    private String cruiseCode;
 
     public Result getResult() { return result; }
     public void setResult(Result result) { this.result = result; }
     public List<Category> getCategoryList() { return categoryList; }
     public void setCategoryList(List<Category> categoryList) { this.categoryList = categoryList; }
-
-    public static class Category {
-        @XmlElement(name = "CategoryId")
-        private String categoryId;
-        @XmlElement(name = "Code")
-        private String code;
-        @XmlElement(name = "Name")
-        private String name;
-        @XmlElement(name = "Sort")
-        private String sort;
-        @XmlElement(name = "Type")
-        private String type;
-        @XmlElement(name = "RegularCapacity")
-        private int regularCapacity;
-        @XmlElement(name = "AvailUnits")
-        private int availUnits;
-        @XmlElementWrapper(name = "RateList")
-        @XmlElement(name = "Rate")
-        private List<Rate> rateList;
-
-        public String getCategoryId() { return categoryId; }
-        public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
-        public String getCode() { return code; }
-        public void setCode(String code) { this.code = code; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public String getSort() { return sort; }
-        public void setSort(String sort) { this.sort = sort; }
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        public int getRegularCapacity() { return regularCapacity; }
-        public void setRegularCapacity(int regularCapacity) { this.regularCapacity = regularCapacity; }
-        public int getAvailUnits() { return availUnits; }
-        public void setAvailUnits(int availUnits) { this.availUnits = availUnits; }
-        public List<Rate> getRateList() { return rateList; }
-        public void setRateList(List<Rate> rateList) { this.rateList = rateList; }
+    public String getCruiseCode() {
+        return cruiseCode;
+    }
+    public void setCruiseCode(String cruiseCode) {
+        this.cruiseCode = cruiseCode;
     }
 } 
