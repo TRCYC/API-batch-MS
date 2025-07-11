@@ -34,6 +34,8 @@ public class BatchController {
     private Job hotelJob;
     @Autowired
     private Job pricingJob;
+    @Autowired
+    private Job voyageJob;
 
     @GetMapping("/region")
     public String getMethodName() {
@@ -84,6 +86,15 @@ public class BatchController {
                 .toJobParameters();
         jobLauncher.run(pricingJob, params);
         return "Pricing job triggered!";
+    }
+
+    @GetMapping("/run-voyage-job")
+    public String voyageJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(voygaeJob, params);
+        return "Voyage job triggered!";
     }
 
 }

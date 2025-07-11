@@ -44,4 +44,11 @@ public class BatchJobConfig {
                 .build();
     }
 
+    @Bean
+    public Job voyageJob(JobBuilderFactory jobBuilderFactory, Step voyageStep) {
+        return jobBuilderFactory.get("voyageJob")
+                .start(voyageStep)
+                .build();
+    }
+
 }
