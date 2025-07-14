@@ -39,16 +39,16 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
                 .filter(event -> dateRangeEntity.isBegDateOnOrAfterStartAt(event.getBegDate()))
                 .map(event -> {
                     Voyage voyage = new Voyage();
-                    voyage.setEventId(event.getEventId());
-                    voyage.setCode(event.getCode());
-                    voyage.setName(event.getName());
-                    voyage.setBegDate(event.getBegDate());
-                    voyage.setEndDate(event.getEndDate());
-                    voyage.setBegLocation(event.getBegLocation());
-                    voyage.setEndLocation(event.getEndLocation());
-                    voyage.setCruiseCode(event.getCode());
-                    voyage.setCreatedDate(java.time.LocalDateTime.now().toString());
-                    voyage.setComments(event.getComments());
+                    // voyage.setEventId(event.getEventId());
+                    // voyage.setCode(event.getCode());
+                    // voyage.setName(event.getName());
+                    // voyage.setBegDate(event.getBegDate());
+                    // voyage.setEndDate(event.getEndDate());
+                    // voyage.setBegLocation(event.getBegLocation());
+                    // voyage.setEndLocation(event.getEndLocation());
+                    // voyage.setCruiseCode(event.getCode());
+                    // voyage.setCreatedDate(java.time.LocalDateTime.now().toString());
+                    // voyage.setComments(event.getComments());
                     return voyage;
                 })
                 .collect(Collectors.toList());

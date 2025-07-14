@@ -129,6 +129,6 @@ public class ElasticService {
 
     public void bulkInsertVoyages(List<com.rcyc.batchsystem.model.elastic.Voyage> voyages, String indexName)
             throws IOException {
-        bulkInsert(voyages, indexName, v -> String.valueOf(v.getEventId()));
+        // bulkInsert(voyages, indexName, v -> String.valueOf(v.getEventId()));
     }
 }

@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.rcyc.batchsystem.model.elastic.Region;
@@ -12,13 +15,23 @@ import com.rcyc.batchsystem.model.job.RegionPayLoad;
 import com.rcyc.batchsystem.model.job.RegionResponse;
 import com.rcyc.batchsystem.model.resco.Dictionary;
 import com.rcyc.batchsystem.model.resco.ResListDictionary;
+import com.rcyc.batchsystem.service.AuditService;
 
-@Component
+ 
 public class RegionProcess {
+ 
+    private Long jobId;
+    private AuditService auditService;
+
+    public RegionProcess(Long jobId,AuditService auditService){
+        this.jobId = jobId;
+        this.auditService = auditService;
+    }
 
     public ItemProcessor<RegionPayLoad, RegionPayLoad> regionProcessForWrite() {
         return item -> {
             if (item != null && item.getRegionReader() != null) {
+                auditService.logAudit(jobId, "feed_type", "Processing");
                 ResListDictionary  listCategory = (ResListDictionary) item.getRegionReader();
                 List<Region> processedList = listCategory.getDictionaryList().getDictionary()
                 .stream()

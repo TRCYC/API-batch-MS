@@ -3,6 +3,10 @@ package com.rcyc.batchsystem.model.elastic;
 import java.util.List;
 import java.util.Map;
 
+import com.rcyc.batchsystem.model.elastic.VoyageLogstashFinish;
+import com.rcyc.batchsystem.model.elastic.FeedStartDate;
+import com.rcyc.batchsystem.model.elastic.PortData;
+
 public class Voyage {
     private String portCode;
     private String yachtName;
@@ -37,32 +41,6 @@ public class Voyage {
     private String voyageDisembarkRegion;
     private String voyageEmbarkRegion;
     private List<String> ports;
-
-    // Nested classes for complex fields
-    public static class VoyageLogstashFinish {
-        private int audit_id;
-        public int getAudit_id() { return audit_id; }
-        public void setAudit_id(int audit_id) { this.audit_id = audit_id; }
-    }
-    public static class FeedStartDate {
-        private String start_at;
-        public String getStart_at() { return start_at; }
-        public void setStart_at(String start_at) { this.start_at = start_at; }
-    }
-    public static class PortData {
-        private String portCode;
-        private int sequenceNo;
-        private long portDate;
-        private String portName;
-        public String getPortCode() { return portCode; }
-        public void setPortCode(String portCode) { this.portCode = portCode; }
-        public int getSequenceNo() { return sequenceNo; }
-        public void setSequenceNo(int sequenceNo) { this.sequenceNo = sequenceNo; }
-        public long getPortDate() { return portDate; }
-        public void setPortDate(long portDate) { this.portDate = portDate; }
-        public String getPortName() { return portName; }
-        public void setPortName(String portName) { this.portName = portName; }
-    }
 
     // Getters and setters for all fields
     public String getPortCode() { return portCode; }
