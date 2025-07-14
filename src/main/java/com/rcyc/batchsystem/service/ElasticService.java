@@ -2,11 +2,13 @@ package com.rcyc.batchsystem.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.stereotype.Service;
 
 import com.rcyc.batchsystem.model.elastic.Region;
 import com.rcyc.batchsystem.model.elastic.Port;
+import com.rcyc.batchsystem.model.elastic.Pricing;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
@@ -51,94 +53,15 @@ public class ElasticService {
         }
     }
 
-    public void bulkInsertRegions(List<Region> regions, String indexName)
-            throws IOException {
+    public <T> void bulkInsert(List<T> items, String indexName, Function<T, String> idExtractor) throws IOException {
         BulkRequest.Builder br = new BulkRequest.Builder();
 
-        for (Region region : regions) {
+        for (T item : items) {
             br.operations(op -> op
                     .index(idx -> idx
                             .index(indexName)
-                            .id(region.getRegion_code()) // optional, can be auto-generated
-                            .document(region)));
-        }
-
-        BulkResponse result = client.bulk(br.build());
-
-        if (result.errors()) {
-            System.out.println("Bulk had errors");
-            result.items().forEach(item -> {
-                if (item.error() != null) {
-                    System.out.println(item.error().reason());
-                }
-            });
-        } else {
-            System.out.println("Bulk insert successful");
-        }
-    }
-
-    public void bulkInsertPorts(List<Port> ports, String indexName)
-            throws IOException {
-        BulkRequest.Builder br = new BulkRequest.Builder();
-
-        for (Port port : ports) {
-            br.operations(op -> op
-                    .index(idx -> idx
-                            .index(indexName)
-                            .id(String.valueOf(port.getPortId())) // optional, can be auto-generated
-                            .document(port)));
-        }
-
-        BulkResponse result = client.bulk(br.build());
-
-        if (result.errors()) {
-            System.out.println("Bulk had errors");
-            result.items().forEach(item -> {
-                if (item.error() != null) {
-                    System.out.println(item.error().reason());
-                }
-            });
-        } else {
-            System.out.println("Bulk insert successful");
-        }
-    }
-
-    public void bulkInsertItineraries(List<com.rcyc.batchsystem.model.elastic.Itinerary> itineraries, String indexName)
-            throws IOException {
-        BulkRequest.Builder br = new BulkRequest.Builder();
-
-        for (com.rcyc.batchsystem.model.elastic.Itinerary itinerary : itineraries) {
-            br.operations(op -> op
-                    .index(idx -> idx
-                            .index(indexName)
-                            .id(String.valueOf(itinerary.getId())) // optional, can be auto-generated
-                            .document(itinerary)));
-        }
-
-        BulkResponse result = client.bulk(br.build());
-
-        if (result.errors()) {
-            System.out.println("Bulk had errors");
-            result.items().forEach(item -> {
-                if (item.error() != null) {
-                    System.out.println(item.error().reason());
-                }
-            });
-        } else {
-            System.out.println("Bulk insert successful");
-        }
-    }
-
-    public void bulkInsertHotels(List<com.rcyc.batchsystem.model.elastic.Hotel> hotels, String indexName)
-            throws IOException {
-        BulkRequest.Builder br = new BulkRequest.Builder();
-
-        for (com.rcyc.batchsystem.model.elastic.Hotel hotel : hotels) {
-            br.operations(op -> op
-                    .index(idx -> idx
-                            .index(indexName)
-                            .id(String.valueOf(hotel.getEventId())) // optional, can be auto-generated
-                            .document(hotel)));
+                            .id(idExtractor.apply(item))
+                            .document(item)));
         }
 
         BulkResponse result = client.bulk(br.build());
@@ -169,15 +92,43 @@ public class ElasticService {
         client.indices().create(c -> c
                 .index(indexName)
                 .settings(s -> s.numberOfShards("1").numberOfReplicas("1")));
- 
+
     }
 
     public void truncateIndexData(String indexName) throws IOException {
-    client.deleteByQuery(dq -> dq
-        .index(indexName)
-        .query(q -> q
-            .matchAll(m -> m)
-        )
-    );
-}
+        client.deleteByQuery(dq -> dq
+                .index(indexName)
+                .query(q -> q
+                        .matchAll(m -> m)));
+    }
+
+    public void bulkInsertPricing(List<com.rcyc.batchsystem.model.elastic.Pricing> pricings, String indexName)
+            throws IOException {
+        bulkInsert(pricings, indexName, p -> String.valueOf(p.getCruiseCode() + p.getCategoryCode() + p.getCurrency()));
+    }
+
+    public void bulkInsertHotels(List<com.rcyc.batchsystem.model.elastic.Hotel> hotels, String indexName)
+            throws IOException {
+        bulkInsert(hotels, indexName, h -> String.valueOf(h.getEventId()));
+    }
+
+    public void bulkInsertRegions(List<Region> regions, String indexName)
+            throws IOException {
+        bulkInsert(regions, indexName, r -> r.getRegion_code());
+    }
+
+    public void bulkInsertPorts(List<Port> ports, String indexName)
+            throws IOException {
+        bulkInsert(ports, indexName, p -> String.valueOf(p.getPortId()));
+    }
+
+    public void bulkInsertItineraries(List<com.rcyc.batchsystem.model.elastic.Itinerary> itineraries, String indexName)
+            throws IOException {
+        bulkInsert(itineraries, indexName, i -> String.valueOf(i.getId()));
+    }
+
+    public void bulkInsertVoyages(List<com.rcyc.batchsystem.model.elastic.Voyage> voyages, String indexName)
+            throws IOException {
+        // bulkInsert(voyages, indexName, v -> String.valueOf(v.getEventId()));
+    }
 }

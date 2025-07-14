@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.rcyc.batchsystem.model.resco.Agency;
 import com.rcyc.batchsystem.model.resco.Availability;
+import com.rcyc.batchsystem.model.resco.Category;
 import com.rcyc.batchsystem.model.resco.Dictionary;
 import com.rcyc.batchsystem.model.resco.Event;
 import com.rcyc.batchsystem.model.resco.Facility;
 import com.rcyc.batchsystem.model.resco.Itinerary;
 import com.rcyc.batchsystem.model.resco.Location;
+import com.rcyc.batchsystem.model.resco.Rate;
 import com.rcyc.batchsystem.model.resco.ReqListDictionary;
 import com.rcyc.batchsystem.model.resco.ReqListEvent;
 import com.rcyc.batchsystem.model.resco.ReqListItinerary;
@@ -20,6 +23,8 @@ import com.rcyc.batchsystem.model.resco.ResListItenarary;
 import com.rcyc.batchsystem.model.resco.ResListItinerary;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.model.resco.User;
+import com.rcyc.batchsystem.model.resco.ReqListCategory;
+import com.rcyc.batchsystem.model.resco.ResListCategory;
 
 @Service
 public class RescoClient {
@@ -42,11 +47,11 @@ public class RescoClient {
         return response;
     }
 
-    public ResListEvent getAllVoyages(){
+    public ResListEvent getAllVoyages(int disabled){
         ReqListEvent reqListEvent = new ReqListEvent();
         reqListEvent.setUser(getUser());
         reqListEvent.setAvailability(new Availability(0));
-        reqListEvent.setEvent(new Event(0));
+        reqListEvent.setEvent(new Event(disabled));
         reqListEvent.setFacility(new Facility("O"));
         ResListEvent resListEvent= restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListEvent, ResListEvent.class);
         return resListEvent;
@@ -70,6 +75,28 @@ public class RescoClient {
         ResListItinerary response =  restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListItinerary, ResListItinerary.class);
          System.out.println(response.toString());
         return response;
+    }
+
+    public ResListCategory getSuiteByCurrency(String currencyType, String eventId, int surcharges) {
+        System.out.println("Currency >> "+currencyType + " Event >>"+eventId);
+        ReqListCategory req = new ReqListCategory();
+        Agency agency = new Agency();
+        agency.setAgentId("40622"); // Replace with actual agent id or inject as needed
+        Category category = new Category();
+        category.setEventId(eventId);
+        Rate rate = new Rate();
+        rate.setCurrency(currencyType);
+        rate.setSurcharges(surcharges);
+        req.setUser(getUser());
+        req.setAgency(agency);
+        req.setCategory(category);
+        req.setRate(rate);
+ 
+        return restTemplate.postForObject(
+            "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+            req,
+            ResListCategory.class
+        );
     }
 
     private User getUser(){

@@ -53,7 +53,7 @@ public class ItinararyReader implements ItemReader<DefaultPayLoad<Itinerary, Obj
         ResListLocation pLocations =  rescoClient.getAllPorts("P");
         ResListLocation oLocations =  rescoClient.getAllPorts("O");
         
-        ResListEvent resListEvent = rescoClient.getAllVoyages();
+        ResListEvent resListEvent = rescoClient.getAllVoyages(0);
 
         List<com.rcyc.batchsystem.model.resco.Itinerary> itineraries = getItinerariesByVoyages(resListEvent.getEventList(),dateRanges.get(0));
         Map<String,Object> itineraryMap =new HashMap<>();
