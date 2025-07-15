@@ -15,8 +15,6 @@ import com.rcyc.batchsystem.service.ElasticService;
 public class TransferWriter implements ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> {
 	@Autowired
 	private ElasticService elasticService;
-	@Autowired
-	private RegionRepository regionRepository;
 
 	@Override
 	public void write(List<? extends DefaultPayLoad<Transfer, Object, Transfer>> items) throws Exception {
@@ -26,8 +24,8 @@ public class TransferWriter implements ItemWriter<DefaultPayLoad<Transfer, Objec
 			List<Transfer> transferList = payload.getResponse();
 			System.out.println(transferList.size());
 			if (transferList != null && !transferList.isEmpty()) {
-			//elasticService.bulkInsertPorts(portList, "port_demo");
+				elasticService.bulkInsertTransfers(transferList, "transfer_demo");
+			}
 		}
 	}
-
 }

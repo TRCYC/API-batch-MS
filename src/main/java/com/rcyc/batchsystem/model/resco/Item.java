@@ -5,64 +5,37 @@ import javax.xml.bind.annotation.XmlElement;
 public class Item {
 
 	private String comments;
-
 	private String bookingId;
-
 	private String eventId;
-
 	private String itemId;
-
 	private String details;
-
 	private String begDate;
-
 	private String type;
-
 	private String amount;
-
 	private String saleId;
-
 	private String endDate;
-
 	private String tripId;
-
 	private String transactionId;
-
 	private String reason;
-
 	private String groupType;
-
 	private String rate;
-
 	private String surcharges;
-
 	private String items;
-
 	private String media;
-
 	private String code;
-
 	private String name;
-
 	private String sort;
-
 	private String availItems;
-
 	private String itemTypeCode;
-
 	private String itemTypeName;
-
 	private String deliveryType;
-
 	private String groupCode;
-
 	private String groupName;
-
 	private String bandCode;
-
 	private String bandName;
-
 	private String folioId;
+	private String duration;
+	private String durationHours;
 
 	@XmlElement(name = "FolioId")
 	public String getFolioId() {
@@ -452,6 +425,22 @@ public class Item {
 				+ sort + ", availItems=" + availItems + ", itemTypeCode=" + itemTypeCode + ", itemTypeName="
 				+ itemTypeName + ", deliveryType=" + deliveryType + ", groupCode=" + groupCode + ", groupName="
 				+ groupName + ", bandCode=" + bandCode + ", bandName=" + bandName + "]";
+	}
+
+	public String getDurationHours() {
+		return durationHours;
+	}
+
+	public void setDurationHours(String durationHours) {
+		this.durationHours = durationHours;
+	}
+
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
 	}
 
 }

@@ -10,7 +10,7 @@ public class Transfer {
 	private String transferCode;
 	private String sortOrder;
 	private String itemTypeName;
-	private int rescoItemID;
+	private String rescoItemID;
 	private String portCode;
 	private String bandName;
 	private String durationHours;
@@ -88,11 +88,11 @@ public class Transfer {
 		this.itemTypeName = itemTypeName;
 	}
 
-	public int getRescoItemID() {
+	public String getRescoItemID() {
 		return rescoItemID;
 	}
 
-	public void setRescoItemID(int rescoItemID) {
+	public void setRescoItemID(String rescoItemID) {
 		this.rescoItemID = rescoItemID;
 	}
 
