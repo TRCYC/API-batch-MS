@@ -13,16 +13,14 @@ public class CustomDataSourceConfig {
 
     @Value("${db.driver}")
     private String databaseDriver;
-
-    private String getDecryptedEnv(String envVar) {
-        String value = System.getenv(envVar);
-        System.out.println("=============>" + value);
-        return value != null ? CryptoUtil.decrypt(value) : null;
-    }
-
     private String databaseUrl;
     private String databaseUsername;
     private String databasePassword;
+
+    private String getDecryptedEnv(String envVar) {
+        String value = System.getenv(envVar); 
+        return value != null ? CryptoUtil.decrypt(value) : null;
+    }
 
     private String getDatabaseUrl() {
         if (databaseUrl == null) {

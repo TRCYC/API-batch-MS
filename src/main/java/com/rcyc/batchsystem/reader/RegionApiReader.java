@@ -17,6 +17,7 @@ import com.rcyc.batchsystem.model.job.RegionPayLoad;
 import com.rcyc.batchsystem.model.resco.ResListDictionary;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.RescoClient;
+import com.rcyc.batchsystem.service.ScheduledJobService;
 
  
 public class RegionApiReader implements ItemReader<RegionPayLoad> {
@@ -27,11 +28,13 @@ public class RegionApiReader implements ItemReader<RegionPayLoad> {
     private boolean alreadyRead = false;
     private AuditService auditService;
     private LocalDateTime today = LocalDateTime.now();
+    private ScheduledJobService scheduledJobService;
 
-    public RegionApiReader(RescoClient rescoClient, Long jobId,AuditService auditService) {
+    public RegionApiReader(RescoClient rescoClient, Long jobId,AuditService auditService,ScheduledJobService scheduledJobService) {
         this.rescoClient = rescoClient;
         this.jobId = jobId;
         this.auditService =auditService;
+        this.scheduledJobService = scheduledJobService;
     }
 
 
@@ -40,8 +43,13 @@ public class RegionApiReader implements ItemReader<RegionPayLoad> {
     public RegionPayLoad read()
             throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         try {
-            if (alreadyRead)
+            boolean flag = scheduledJobService.isJobAvailableForExecution(jobId, auditService);
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% "+flag);
+            if (!flag){
+                System.out.println("<<<<<<<<    NULL >>>>>> <<<<<<<<<" + jobId);
                 return null;
+            }
+                
             RegionPayLoad regionPayLoad = new RegionPayLoad();
             regionPayLoad.setRegionReader(getRegionsFromResco());
             alreadyRead = true;

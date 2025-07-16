@@ -16,7 +16,9 @@ import com.rcyc.batchsystem.reader.RegionApiReader;
 import com.rcyc.batchsystem.repository.RegionRepository;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
+import com.rcyc.batchsystem.service.RegionStepCallbackListener;
 import com.rcyc.batchsystem.service.RescoClient;
+import com.rcyc.batchsystem.service.ScheduledJobService;
 import com.rcyc.batchsystem.writer.RegionWriter;
 
 @Configuration
@@ -35,6 +37,10 @@ public class RegionBatchJob {
     private ElasticService elasticService;
     @Autowired
     private RegionRepository regionRepository;
+    @Autowired
+    private ScheduledJobService scheduledJobService;
+    @Autowired
+    private RegionStepCallbackListener regionStepCallbackListener;
 
     // @Bean
     // public Step regionStep(StepBuilderFactory stepBuilderFactory,
@@ -50,7 +56,7 @@ public class RegionBatchJob {
     @Bean
     @StepScope
     public ItemReader<RegionPayLoad> regionReader(@Value("#{jobParameters['jobId']}") Long jobId) {
-        return new RegionApiReader(rescoClient, jobId, auditService);
+        return new RegionApiReader(rescoClient, jobId, auditService, scheduledJobService);
     }
 
     @Bean
@@ -66,16 +72,6 @@ public class RegionBatchJob {
         return new RegionWriter(jobId,elasticService,regionRepository,auditService);
     }
 
-    // @Bean
-    // public ItemProcessor<RegionPayLoad, RegionPayLoad> regionStepProcessor() {
-    // System.out.println("Region processore");
-    // return regionProcess.regionProcessForWrite();
-    // }
-
-    // @Bean
-    // public ItemWriter<RegionPayLoad> regionStepWriter() {
-    // return regionWriter;
-    // }
 
     @Bean
     public Step regionStep(StepBuilderFactory stepBuilderFactory,
@@ -87,6 +83,7 @@ public class RegionBatchJob {
                 .reader(regionReader)
                 .processor(regionProcessor)
                 .writer(regionWriter)
+                .listener(regionStepCallbackListener)
                 .build();
     }
 }

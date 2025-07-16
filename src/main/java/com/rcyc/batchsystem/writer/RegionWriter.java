@@ -47,13 +47,13 @@ public class RegionWriter implements ItemWriter<RegionPayLoad> {
             List<RegionEntity> regionArrayList = new ArrayList<>();
             regionIteratorList.forEach(regionArrayList::add);
             auditService.logAudit(jobId, "feed_type", "Writing");
-            elasticService.createTempIndex("region_demo");
-            elasticService.truncateIndexData("region_demo");
+            // elasticService.createTempIndex("region_demo");
+            // elasticService.truncateIndexData("region_demo");
             for (RegionPayLoad payload : items) {
                 processRegionBeforeInsert(payload.getRegionResponse(), regionArrayList);
                 List<Region> regionList = processRegionBeforeInsert(payload.getRegionResponse(), regionArrayList);
                 auditService.logAudit(jobId, "feed_type", "ES bulk insertion started");
-                elasticService.bulkInsertRegions(regionList, "region_demo");
+                // elasticService.bulkInsertRegions(regionList, "region_demo");
                 auditService.logAudit(jobId, "feed_type", "ES bulk insertion completed");
             }
             // elasticService.swapIndex
