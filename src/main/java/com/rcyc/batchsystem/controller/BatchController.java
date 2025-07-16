@@ -79,11 +79,14 @@ public class BatchController {
     
     @GetMapping("/run-transfer-job")
     public String transferJob() throws Exception {
+    	Long t1 = System.currentTimeMillis();
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
         jobLauncher.run(transferJob, params);
-        return "Hotel job triggered!";
+        Long t2 = System.currentTimeMillis();
+        System.out.println("Duration--" + (t2-t1));
+        return "Transfer job triggered!";
     }
 
 }

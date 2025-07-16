@@ -23,6 +23,11 @@ public class Transfer {
 	private String groupCode;
 	private String endDate;
 	private String availItems;
+	
+	private String portName;
+	private String eventId;
+	private String transferTfResultStatus;
+	private String countryCode;
 
 	public String get__id() {
 		return __id;
@@ -190,6 +195,38 @@ public class Transfer {
 
 	public void setAvailItems(String availItems) {
 		this.availItems = availItems;
+	}
+
+	public String getPortName() {
+		return portName;
+	}
+
+	public void setPortName(String portName) {
+		this.portName = portName;
+	}
+
+	public String getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+
+	public String getTransferTfResultStatus() {
+		return transferTfResultStatus;
+	}
+
+	public void setTransferTfResultStatus(String transferTfResultStatus) {
+		this.transferTfResultStatus = transferTfResultStatus;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 }

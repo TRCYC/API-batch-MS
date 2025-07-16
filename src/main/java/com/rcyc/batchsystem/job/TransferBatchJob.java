@@ -41,12 +41,13 @@ public class TransferBatchJob {
 
 	@Bean
 	public ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferStepProcessor() {
-		System.out.println("Transfer processore");
+		System.out.println("Transfer processor");
 		return transferProcess.transferProcessForWrite();
 	}
 
 	@Bean
 	public ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> transferStepWriter() {
+		System.out.println("Transfer writer");
 		return transferWriter;
 	}
 }

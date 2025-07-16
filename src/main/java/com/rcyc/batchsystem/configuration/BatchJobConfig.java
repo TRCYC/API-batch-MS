@@ -38,9 +38,9 @@ public class BatchJobConfig {
     }
 
     @Bean
-    public Job transferJob(JobBuilderFactory jobBuilderFactory, Step hotelStep) {
+    public Job transferJob(JobBuilderFactory jobBuilderFactory, Step transferStep) {
         return jobBuilderFactory.get("transferJob")
-                .start(hotelStep)
+                .start(transferStep)
                 .build();
     }
 }

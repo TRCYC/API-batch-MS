@@ -1,5 +1,13 @@
 package com.rcyc.batchsystem.service;
 
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -42,11 +50,12 @@ public class RescoClient {
     public ResListLocation getAllPorts(String type){
         ReqListLocation reqListLocation = new ReqListLocation(getUser(),new Location(0,type));
         ResListLocation response =  restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListLocation, ResListLocation.class);
-         System.out.println(response.toString());
+        // System.out.println(response.toString());
         return response;
     }
 
     public ResListEvent getAllVoyages(){
+    	System.out.println("Inside getAllVoyages");
         ReqListEvent reqListEvent = new ReqListEvent();
         reqListEvent.setUser(getUser());
         reqListEvent.setAvailability(new Availability(0));
@@ -76,19 +85,91 @@ public class RescoClient {
         return response;
     }
     
-    public ResListItem getTransfer(String type, String voyageId){
-    	ReqListItem reqListItem = new ReqListItem();
-    	reqListItem.setAgency(new Agency("40622")); //TRANSFER_AGENT_ID
-    	Item item = new Item();
-    	item.setGroupType(type);
-    	reqListItem.setItem(item);
-    	reqListItem.setEvent(new Event(voyageId));
-        ResListItem response =  restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListItem, ResListItem.class);
-        System.out.println(response.toString());
-        return response;
-    }
+	public ResListItem getTransfer(String type, int voyageId) {
+		ReqListItem reqListItem = new ReqListItem();
+		reqListItem.setUser(getUser());
+		reqListItem.setAgency(new Agency("40622")); // TRANSFER_AGENT_ID
+		Item item = new Item();
+		item.setGroupType(type);
+		reqListItem.setItem(item);
+		reqListItem.setEvent(new Event(String.valueOf(voyageId)));
+		ResListItem response = new ResListItem();
+		try {
+			// convertToXml(reqListItem);
+			response = restTemplate.postForObject(
+					"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+					reqListItem, ResListItem.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		/*if (response.getItemList() != null) {
+			if (response.getItemList().getItemList() != null)
+				System.out.println(response.getItemList().getItemList().size());
+		} else
+			System.out.println("response getItemList is null");*/
+		return response;
+	}
+	
+	public ResListItem getTransferArr(String[] typeArr, int voyageId, String transferTfResultStatus) {
+		ReqListItem reqListItem = new ReqListItem();
+		reqListItem.setUser(getUser());
+		reqListItem.setAgency(new Agency("40622")); // TRANSFER_AGENT_ID
+		//Item item = new Item();
+		//item.setGroupType(type);
+		//reqListItem.setItem(item);
+		reqListItem.setEvent(new Event(String.valueOf(voyageId)));
+		ResListItem response = new ResListItem();
+		List<Item> itemList = new ArrayList<Item>();
+		for(String type: typeArr) {
+			Item item = new Item();
+			item.setGroupType(type);
+			reqListItem.setItem(item);
+			try {
+				// convertToXml(reqListItem);
+				response = restTemplate.postForObject(
+						"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+						reqListItem, ResListItem.class);
+
+				if (response != null) {
+					if (type.equals("TF"))
+						transferTfResultStatus = response.getResult().getStatus();
+					if (response.getItemList() != null && response.getItemList().getItemList() != null) {
+						System.out.println(
+								"Transfer size - " + type + " -" + response.getItemList().getItemList().size());
+						itemList.addAll(response.getItemList().getItemList());
+					}
+				}
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+		response.getItemList().setItemList(itemList);
+		/*if (response.getItemList() != null) {
+			if (response.getItemList().getItemList() != null)
+				System.out.println(response.getItemList().getItemList().size());
+		} else
+			System.out.println("response getItemList is null");*/
+		return response;
+	}
 
     private User getUser(){
         return new User("webapiprod1","theGr8tw1de0pen#305");
     }
+    
+	// To print your object in XML
+	public void convertToXml(Object obj) {
+		try {
+			JAXBContext context = JAXBContext.newInstance(obj.getClass());
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			StringWriter sw = new StringWriter();
+			marshaller.marshal(obj, sw);
+			System.out.println(sw.toString());
+			// return sw.toString();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			// return null;
+		}
+	}
 }
