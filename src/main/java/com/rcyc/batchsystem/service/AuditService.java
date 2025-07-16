@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AuditService {
@@ -17,6 +18,8 @@ public class AuditService {
 
     @Autowired
     private ScheduledJobsRepository scheduledJobsRepository;
+
+    private final ConcurrentHashMap<Long, String> schedulerNameCache = new ConcurrentHashMap<>();
 
     public RcycAudit logAudit(Long jobId, String processName, LocalDateTime createdTime, LocalDateTime responseTime,
             LocalDateTime updatedTime, String description) {
@@ -42,9 +45,15 @@ public class AuditService {
     }
 
     private String getSchedulerName(Long jobId) {
+        // Check cache first
+        if (schedulerNameCache.containsKey(jobId)) {
+            return schedulerNameCache.get(jobId);
+        }
         try {
             Optional<String> schedulerName = scheduledJobsRepository.findSchedulerNameByExternalJobId(jobId);
-            return schedulerName.isPresent() ? schedulerName.get() : "feed_type";
+            String name = schedulerName.isPresent() ? schedulerName.get() : "feed_type";
+            schedulerNameCache.put(jobId, name);
+            return name;
         } catch (Exception e) {
             e.printStackTrace();
         }
