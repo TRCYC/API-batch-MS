@@ -16,7 +16,7 @@ import com.rcyc.batchsystem.reader.RegionApiReader;
 import com.rcyc.batchsystem.repository.RegionRepository;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
-import com.rcyc.batchsystem.service.RegionStepCallbackListener;
+import com.rcyc.batchsystem.service.JobStepCallbackListener; 
 import com.rcyc.batchsystem.service.RescoClient;
 import com.rcyc.batchsystem.service.ScheduledJobService;
 import com.rcyc.batchsystem.writer.RegionWriter;
@@ -40,7 +40,7 @@ public class RegionBatchJob {
     @Autowired
     private ScheduledJobService scheduledJobService;
     @Autowired
-    private RegionStepCallbackListener regionStepCallbackListener;
+    private JobStepCallbackListener jobStepCallbackListener;
 
     // @Bean
     // public Step regionStep(StepBuilderFactory stepBuilderFactory,
@@ -83,7 +83,7 @@ public class RegionBatchJob {
                 .reader(regionReader)
                 .processor(regionProcessor)
                 .writer(regionWriter)
-                .listener(regionStepCallbackListener)
+                .listener(jobStepCallbackListener)
                 .build();
     }
 }

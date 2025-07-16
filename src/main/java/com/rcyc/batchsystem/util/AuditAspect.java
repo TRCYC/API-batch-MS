@@ -25,7 +25,7 @@ public class AuditAspect {
         Long jobId = getCurrentJobId();
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-                    "System start for reading");
+                    "System call reader");
     }
 
     @Before("execution(* com.rcyc.batchsystem.process..*.*(..))")
@@ -33,7 +33,7 @@ public class AuditAspect {
         Long jobId = getCurrentJobId();
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-                    "System start for processing ");
+                    "System call processor");
     }
 
     // Example for writer
@@ -42,7 +42,7 @@ public class AuditAspect {
         Long jobId = getCurrentJobId();
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-                    "System start for writing");
+                    "System call writer");
     }
 
     @After("execution(* com.rcyc.batchsystem.reader..*.read(..))")
@@ -50,24 +50,24 @@ public class AuditAspect {
         Long jobId = getCurrentJobId();
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-                    "System end of reading");
+                    "Leaving from reader");
     }
 
-    @Before("execution(* com.rcyc.batchsystem.process..*.*(..))")
+    @After("execution(* com.rcyc.batchsystem.process..*.*(..))")
     public void logAfterProcessor(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-                    "System end of processing ");
+                    "Leaving from processor");
     }
 
     // Example for writer
-    @Before("execution(* com.rcyc.batchsystem.writer..*.write(..))")
+    @After("execution(* com.rcyc.batchsystem.writer..*.write(..))")
     public void logAfterWriter(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-                    "System end of writing");
+                    "Leaving from writer");
     }
 
     // Utility method to get jobId from current StepExecution

@@ -15,7 +15,7 @@ import com.rcyc.batchsystem.util.Constants;
 import com.rcyc.batchsystem.util.JobStatus;
 
 @Component
-public class RegionStepCallbackListener implements StepExecutionListener {
+public class JobStepCallbackListener implements StepExecutionListener {
 
     @Autowired
     private ExternalApiClient externalApiClient;
@@ -23,6 +23,8 @@ public class RegionStepCallbackListener implements StepExecutionListener {
     private ScheduledJobsRepository scheduledJobsRepository;
     @Autowired
     private ElasticService elasticService;
+    @Autowired
+    private AuditService auditService;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -35,15 +37,17 @@ public class RegionStepCallbackListener implements StepExecutionListener {
             StatusDto responseDto = new StatusDto();
             Long jobId = stepExecution.getJobParameters().getLong("jobId");
             String schedulerName = getSchedulerName(jobId);
-            responseDto.setJobId(jobId);
-            responseDto.setProcess(schedulerName);
-            if(schedulerName.equalsIgnoreCase(Constants.REGION)){
-              Long documentCount =  elasticService.getDocumentCount(Constants.REGION_DEMO);
-              responseDto.setCurrentCount(String.valueOf(documentCount));
-              responseDto.setStatus(Constants.SUCCESS);
-            }
-            externalApiClient.callBack(responseDto);  
-            System.out.println(" External API callback sent successfully");
+            if (schedulerName != null) {
+                responseDto.setJobId(jobId);
+                responseDto.setProcess(schedulerName);
+                if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.REGION)) {
+                    responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.REGION_DEMO)));
+                    responseDto.setStatus(Constants.SUCCESS);
+                }
+                externalApiClient.callBack(responseDto);
+                System.out.println(" External API callback sent successfully");
+            }else
+              auditService.logAudit(jobId,"anonymous"," No scheduler is related for the job :"+jobId);
         } catch (Exception e) {
             System.err.println(" API callback failed: " + e.getMessage());
             e.printStackTrace();
@@ -51,15 +55,17 @@ public class RegionStepCallbackListener implements StepExecutionListener {
         return ExitStatus.COMPLETED;
     }
 
-    private String getSchedulerName(Long jobId){
-        try{
-            ScheduledJob scheduledJob =   scheduledJobsRepository.findByExternalJobId(jobId);
-            if(scheduledJob!=null && scheduledJob.getId()!=null && scheduledJob.getJobStatus().intValue()!= JobStatus.PENDING.getCode()){
-                Optional<String> schedulerName = scheduledJobsRepository.findSchedulerNameById(scheduledJob.getSchedulerId().intValue());
-                if(schedulerName.isPresent())
+    private String getSchedulerName(Long jobId) {
+        try {
+            ScheduledJob scheduledJob = scheduledJobsRepository.findByExternalJobId(jobId);
+            if (scheduledJob != null && scheduledJob.getId() != null
+                    && scheduledJob.getJobStatus().intValue() != JobStatus.PENDING.getCode()) {
+                Optional<String> schedulerName = scheduledJobsRepository
+                        .findSchedulerNameById(scheduledJob.getSchedulerId().intValue());
+                if (schedulerName.isPresent())
                     return schedulerName.get();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

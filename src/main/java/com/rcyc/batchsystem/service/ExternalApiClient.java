@@ -29,7 +29,7 @@ public class ExternalApiClient {
 
     public void callBack(StatusDto responseDto) {
         try {
-            String response = callExternalApiPost(Constants.SCHEDULER_API, responseDto);
+            String response = callExternalApiPost(Constants.SCHEDULER_API+"/updateStatus", responseDto);
             System.out.println("Callback response: " + response);
         } catch (Exception e) {
             System.err.println("Callback failed: " + e.getMessage());
