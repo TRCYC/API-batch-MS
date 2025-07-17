@@ -1,6 +1,7 @@
 package com.rcyc.batchsystem.reader;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.batch.item.ItemReader;
@@ -16,13 +17,16 @@ import com.rcyc.batchsystem.model.resco.ResListEvent;
 import com.rcyc.batchsystem.model.resco.ResListItinerary;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.repository.FeedDateRangeRepository;
+import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.RescoClient;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Component
 public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, Voyage>> {
     private boolean alreadyRead = false;
-
+    @Autowired
+    private AuditService auditService;
     @Autowired
     private RescoClient rescoClient;
     @Autowired
@@ -35,6 +39,7 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
             if (alreadyRead)
                 return null;
             List<FeedDateRangeEntity> dateRanges = feedDateRangeRepository.findByType("VOY");
+            // auditService.logAudit(jobId)
             ResListDictionary listDictionary = rescoClient.getAllRegions();
             ResListLocation pList = rescoClient.getAllPorts("P");
             ResListLocation oList = rescoClient.getAllPorts("O");
@@ -46,30 +51,16 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
             ResListEvent resListEvent = rescoClient.getAllVoyages(1);
 
             List<EventDetail> eventList = resListEvent.getEventList();
-
-
-
-
-            FeedDateRangeEntity dateRangeEntity = dateRanges.get(0);
-            List<Voyage> voyages = eventList.stream()
-                .filter(event -> dateRangeEntity.isBegDateOnOrAfterStartAt(event.getBegDate()))
-                .map(event -> {
-                    Voyage voyage = new Voyage();
-                    // voyage.setEventId(event.getEventId());
-                    // voyage.setCode(event.getCode());
-                    // voyage.setName(event.getName());
-                    // voyage.setBegDate(event.getBegDate());
-                    // voyage.setEndDate(event.getEndDate());
-                    // voyage.setBegLocation(event.getBegLocation());
-                    // voyage.setEndLocation(event.getEndLocation());
-                    // voyage.setCruiseCode(event.getCode());
-                    // voyage.setCreatedDate(java.time.LocalDateTime.now().toString());
-                    // voyage.setComments(event.getComments());
-                    return voyage;
-                })
-                .collect(Collectors.toList());
-            voyagePayLoad.setReader(voyages);
-            System.out.println("Voyage Reader size " + voyages.size());
+            Map<String,Object> voyageMap = new HashMap<>();
+            voyageMap.put("REGIONS", listDictionary);
+            voyageMap.put("PORT_P", pList);
+            voyageMap.put("PORT_O", oList);
+            voyageMap.put("ITINERARY_ILMA", ilmaItinerary);
+            voyageMap.put("ITINERARY_LUMINARA", luminaraItinerary);
+            voyageMap.put("ITINERARY_EVRIMA", evrimaItinerary);
+            voyageMap.put("VOYAGE", resListEvent);
+             
+            voyagePayLoad.setReader(voyageMap); 
             alreadyRead = true;
         } catch (Exception e) {
             e.printStackTrace();

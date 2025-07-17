@@ -27,7 +27,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<!-- <msversion>1.0.0</msversion> -->
+		<msversion>1.0.0</msversion>
 	</properties>
 	<dependencies>
 
@@ -117,6 +117,7 @@
 
 
 	<build>
+		<finalName>rcyc-batch-ms-${msversion}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
