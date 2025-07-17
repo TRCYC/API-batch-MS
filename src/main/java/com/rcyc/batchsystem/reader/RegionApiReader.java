@@ -44,9 +44,7 @@ public class RegionApiReader implements ItemReader<RegionPayLoad> {
             throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         try {
             boolean flag = scheduledJobService.isJobAvailableForExecution(jobId, auditService);
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% "+flag);
             if (!flag){
-                System.out.println("<<<<<<<<    NULL >>>>>> <<<<<<<<<" + jobId);
                 return null;
             }
                 
