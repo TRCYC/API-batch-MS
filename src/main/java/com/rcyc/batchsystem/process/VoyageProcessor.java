@@ -5,8 +5,11 @@ import org.springframework.batch.item.ItemProcessor;
 
 import com.rcyc.batchsystem.model.elastic.Voyage;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
+import com.rcyc.batchsystem.model.resco.ResListDictionary;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class VoyageProcessor {
@@ -15,6 +18,11 @@ public class VoyageProcessor {
             System.out.println(item);
             if (item != null && item.getReader() != null) {
                 List<Voyage> allVoyages = (List<Voyage>) item.getReader();
+
+                Map<String,Object> mapObject = (Map<String, Object>) item.getReader();
+                ResListDictionary listDictionary = (ResListDictionary) mapObject.get("REGIONS");
+                
+
                 System.out.println("From Reader VoyageSize " + allVoyages.size());
                 DefaultPayLoad<Voyage, Object, Voyage> voyagePayload = new DefaultPayLoad<>();
                 voyagePayload.setResponse(allVoyages);
