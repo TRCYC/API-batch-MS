@@ -104,7 +104,7 @@ public class BatchController {
         return "Voyage job triggered!";
     }
     
-    @GetMapping("/run-transfer-job")
+    /*@GetMapping("/run-transfer-job")
     public String transferJob() throws Exception {
     	Long t1 = System.currentTimeMillis();
         JobParameters params = new JobParametersBuilder()
@@ -114,8 +114,20 @@ public class BatchController {
         Long t2 = System.currentTimeMillis();
         System.out.println("Duration--" + (t2-t1));
         return "Transfer job triggered!";
-    }
+    }*/
 
+    @GetMapping("/run-transfer-job/{jobId}")
+    public String transferJob(@PathVariable Long jobId) throws Exception {
+    	Long t1 = System.currentTimeMillis();
+        JobParameters params = new JobParametersBuilder()
+                .addLong("jobId", jobId)
+                .toJobParameters();
+        jobLauncher.run(transferJob, params);
+        Long t2 = System.currentTimeMillis();
+        System.out.println("Duration--" + (t2-t1));
+        return "Transfer job triggered!";
+    }
+    
     @GetMapping("/test")
     public String testMethod() {
         auditService.logAudit(999999l,"TEST_PROCESS_NAME",LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Test Description");

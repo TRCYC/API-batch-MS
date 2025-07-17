@@ -1,5 +1,6 @@
 package com.rcyc.batchsystem.reader;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,9 @@ import com.rcyc.batchsystem.model.resco.ResListEvent;
 import com.rcyc.batchsystem.model.resco.ResListItem;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.model.resco.User;
+import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.RescoClient;
+import com.rcyc.batchsystem.service.ScheduledJobService;
 
 @Component
 public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Object, Transfer>> {
@@ -36,6 +39,17 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 	private RescoClient rescoClient;
 	private boolean alreadyRead = false;
 	private int availUnits = 0;
+	private final Long jobId;
+    private AuditService auditService;
+    private LocalDateTime today = LocalDateTime.now();
+    private ScheduledJobService scheduledJobService;
+	
+	public TransferReader(RescoClient rescoClient, Long jobId,AuditService auditService,ScheduledJobService scheduledJobService) {
+        this.rescoClient = rescoClient;
+        this.jobId = jobId;
+        this.auditService =auditService;
+        this.scheduledJobService = scheduledJobService;
+    }
 
 	class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
 		private static final int THRESHOLD = 200;
@@ -109,10 +123,15 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 
 	@Override
 	public DefaultPayLoad<Transfer, Object, Transfer> read() {
+		boolean flag = scheduledJobService.isJobAvailableForExecution(jobId, auditService);
+        if (!flag){
+            return null;
+        }
 		DefaultPayLoad<Transfer, Object, Transfer> transferPayLoad = new DefaultPayLoad<>();
+		auditService.logAudit(jobId, "feed_type", today, today, today,"Resco call initiated");
 		try {
-			if (alreadyRead)
-				return null;
+			//if (alreadyRead)
+			//	return null;
 			transferPayLoad.setReader(getTransfersFromResco());
 			alreadyRead = true;
 
@@ -137,7 +156,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			eventList.addAll(voyageList.getEventList());
 			eventList.addAll(hotelList.getEventList());
 			System.out.println("Total Event Size--" + eventList.size());
-			if (eventList.stream().filter(obj -> obj.getEventId() == 897).findFirst().isPresent())
+			//if (eventList.stream().filter(obj -> obj.getEventId() == 897).findFirst().isPresent())
 			// eventList = new ArrayList<>(eventList.subList(0, 50));
 			// eventList = eventList.stream().filter(obj-> obj.getEventId()==897).toList();
 			System.out.println("Total Event Size after split--" + eventList.size());

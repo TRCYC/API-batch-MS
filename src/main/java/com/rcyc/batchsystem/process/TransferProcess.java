@@ -14,13 +14,23 @@ import com.rcyc.batchsystem.model.elastic.Transfer;
 import com.rcyc.batchsystem.model.elastic.TransferItem;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.Item;
+import com.rcyc.batchsystem.service.AuditService;
 
 @Component
 public class TransferProcess {
+	
+	private Long jobId;
+    private AuditService auditService;
+    
+    public TransferProcess(Long jobId,AuditService auditService){
+        this.jobId = jobId;
+        this.auditService = auditService;
+    }
 
 	public ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferProcessForWrite() {
 		return item -> {
 			if (item != null && item.getReader() != null) {
+				auditService.logAudit(jobId, "feed_type", "Processing");
 				Map<String, Object> map = (Map<String, Object>) item.getReader();
 				List<Transfer> processedList = new ArrayList<Transfer>();
 				int count = 0;
