@@ -11,7 +11,10 @@ import com.rcyc.batchsystem.entity.FeedDateRangeEntity;
 import com.rcyc.batchsystem.model.elastic.Voyage;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.EventDetail;
+import com.rcyc.batchsystem.model.resco.ResListDictionary;
 import com.rcyc.batchsystem.model.resco.ResListEvent;
+import com.rcyc.batchsystem.model.resco.ResListItinerary;
+import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.repository.FeedDateRangeRepository;
 import com.rcyc.batchsystem.service.RescoClient;
 import java.util.ArrayList;
@@ -32,8 +35,21 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
             if (alreadyRead)
                 return null;
             List<FeedDateRangeEntity> dateRanges = feedDateRangeRepository.findByType("VOY");
+            ResListDictionary listDictionary = rescoClient.getAllRegions();
+            ResListLocation pList = rescoClient.getAllPorts("P");
+            ResListLocation oList = rescoClient.getAllPorts("O");
+            ResListItinerary evrimaItinerary = rescoClient.getAllItinerariesByFacility(12l);
+            ResListItinerary ilmaItinerary = rescoClient.getAllItinerariesByFacility(13l);
+            ResListItinerary luminaraItinerary = rescoClient.getAllItinerariesByFacility(93l);
+            
+
             ResListEvent resListEvent = rescoClient.getAllVoyages(1);
+
             List<EventDetail> eventList = resListEvent.getEventList();
+
+
+
+
             FeedDateRangeEntity dateRangeEntity = dateRanges.get(0);
             List<Voyage> voyages = eventList.stream()
                 .filter(event -> dateRangeEntity.isBegDateOnOrAfterStartAt(event.getBegDate()))

@@ -15,6 +15,7 @@ import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.CountResponse;
 
 @Service
 public class ElasticService {
@@ -130,5 +131,15 @@ public class ElasticService {
     public void bulkInsertVoyages(List<com.rcyc.batchsystem.model.elastic.Voyage> voyages, String indexName)
             throws IOException {
         // bulkInsert(voyages, indexName, v -> String.valueOf(v.getEventId()));
+    }
+
+    public long getDocumentCount(String index) {
+        try {
+            CountResponse response = client.count(c -> c.index(index));
+            return response.count();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

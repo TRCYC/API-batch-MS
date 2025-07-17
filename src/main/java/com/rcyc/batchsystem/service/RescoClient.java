@@ -77,6 +77,17 @@ public class RescoClient {
         return response;
     }
 
+    public ResListItinerary getAllItinerariesByFacility(Long facilityId){ 
+        ReqListItinerary reqListItinerary = new ReqListItinerary();
+        reqListItinerary.setUser(getUser());
+        Itinerary itinerary = new Itinerary();
+        itinerary.setFacilityId(facilityId);
+        reqListItinerary.setItinerary(itinerary);
+        ResListItinerary response =  restTemplate.postForObject("https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", reqListItinerary, ResListItinerary.class);
+         System.out.println(response.toString());
+        return response;
+    }
+
     public ResListCategory getSuiteByCurrency(String currencyType, String eventId, int surcharges) {
         System.out.println("Currency >> "+currencyType + " Event >>"+eventId);
         ReqListCategory req = new ReqListCategory();

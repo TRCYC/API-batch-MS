@@ -24,7 +24,7 @@ public class BatchController {
     @Autowired
     private ElasticService elasticService;
 
-     @Autowired
+    @Autowired
     private JobLauncher jobLauncher;
     @Autowired
     private AuditService auditService;
