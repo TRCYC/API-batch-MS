@@ -107,7 +107,7 @@ public class BatchController {
         return "Voyage job triggered!";
     }
 
-    @GetMapping("/test")
+    @GetMapping("/test-api")
     public String testMethod() {
         auditService.logAudit(999999l,"TEST_PROCESS_NAME",LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Test Description");
         return new String("Region");
