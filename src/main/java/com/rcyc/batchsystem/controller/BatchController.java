@@ -42,6 +42,11 @@ public class BatchController {
     @Autowired
     private Job voyageJob;
 
+    @GetMapping("/test")
+    public String testApi() {
+        return new String("Test API");
+    }
+
     @GetMapping("/region")
     public String getMethodName() {
         elasticService.getRegionData();

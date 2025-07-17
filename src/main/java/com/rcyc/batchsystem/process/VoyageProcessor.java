@@ -6,6 +6,7 @@ import org.springframework.batch.item.ItemProcessor;
 import com.rcyc.batchsystem.model.elastic.Voyage;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.ResListDictionary;
+import com.rcyc.batchsystem.model.resco.ResListLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,9 @@ public class VoyageProcessor {
 
                 Map<String,Object> mapObject = (Map<String, Object>) item.getReader();
                 ResListDictionary listDictionary = (ResListDictionary) mapObject.get("REGIONS");
-                
+                ResListLocation pList = (ResListLocation) mapObject.get("PORT_P");
+                ResListLocation oList = (ResListLocation) mapObject.get("PORT_O");
+
 
                 System.out.println("From Reader VoyageSize " + allVoyages.size());
                 DefaultPayLoad<Voyage, Object, Voyage> voyagePayload = new DefaultPayLoad<>();
