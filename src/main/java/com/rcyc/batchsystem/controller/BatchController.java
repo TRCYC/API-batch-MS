@@ -41,6 +41,8 @@ public class BatchController {
     private Job pricingJob;
     @Autowired
     private Job voyageJob;
+    @Autowired
+    private Job transferJob;
 
     @GetMapping("/region")
     public String getMethodName() {
@@ -100,6 +102,18 @@ public class BatchController {
                 .toJobParameters();
         jobLauncher.run(voyageJob, params);
         return "Voyage job triggered!";
+    }
+    
+    @GetMapping("/run-transfer-job")
+    public String transferJob() throws Exception {
+    	Long t1 = System.currentTimeMillis();
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(transferJob, params);
+        Long t2 = System.currentTimeMillis();
+        System.out.println("Duration--" + (t2-t1));
+        return "Transfer job triggered!";
     }
 
     @GetMapping("/test")
