@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class CustomDataSourceConfig {
 
-    @Value("${db.driver}")
+    /*@Value("${db.driver}")
     private String databaseDriver;
     private String databaseUrl;
     private String databaseUsername;
@@ -52,5 +52,5 @@ public class CustomDataSourceConfig {
         dataSource.setPassword(getDatabasePassword());
         System.out.println(dataSource.getJdbcUrl());
         return dataSource;
-    }
+    }*/
 } 
