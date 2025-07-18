@@ -12,7 +12,6 @@ import com.rcyc.batchsystem.repository.RegionRepository;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
 
-@Component
 public class TransferWriter implements ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> {
 	@Autowired
 	private ElasticService elasticService;

@@ -16,7 +16,6 @@ import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.Item;
 import com.rcyc.batchsystem.service.AuditService;
 
-@Component
 public class TransferProcess {
 	
 	private Long jobId;
