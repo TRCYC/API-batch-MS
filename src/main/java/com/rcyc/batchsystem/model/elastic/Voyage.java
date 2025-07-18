@@ -41,6 +41,7 @@ public class Voyage {
     private String voyageDisembarkRegion;
     private String voyageEmbarkRegion;
     private List<String> ports;
+    private int eventId;
 
     // Getters and setters for all fields
     public String getPortCode() { return portCode; }
@@ -109,4 +110,11 @@ public class Voyage {
     public void setVoyageEmbarkRegion(String voyageEmbarkRegion) { this.voyageEmbarkRegion = voyageEmbarkRegion; }
     public List<String> getPorts() { return ports; }
     public void setPorts(List<String> ports) { this.ports = ports; }
+    public int getEventId() {
+        return eventId;
+    }
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
+    }
+    
 } 

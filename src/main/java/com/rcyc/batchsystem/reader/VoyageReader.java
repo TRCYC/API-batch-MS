@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.rcyc.batchsystem.entity.FeedDateRangeEntity;
+import com.rcyc.batchsystem.entity.RegionEntity;
 import com.rcyc.batchsystem.model.elastic.Voyage;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.EventDetail;
@@ -17,6 +18,7 @@ import com.rcyc.batchsystem.model.resco.ResListEvent;
 import com.rcyc.batchsystem.model.resco.ResListItinerary;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.repository.FeedDateRangeRepository;
+import com.rcyc.batchsystem.repository.RegionRepository;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.RescoClient;
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
     private RescoClient rescoClient;
     @Autowired
     private FeedDateRangeRepository feedDateRangeRepository;
+    @Autowired
+    private RegionRepository regionRepository;
 
     @Override
     public DefaultPayLoad<Voyage, Object, Voyage> read() {
@@ -40,6 +44,11 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
                 return null;
             List<FeedDateRangeEntity> dateRanges = feedDateRangeRepository.findByType("VOY");
             // auditService.logAudit(jobId)
+            List<RegionEntity> regionArrayList = new ArrayList<>();
+            Iterable<RegionEntity> regionIteratorList = regionRepository.findAll();
+            if (regionIteratorList.iterator().hasNext()) {
+                regionIteratorList.forEach(regionArrayList::add);
+            }
             ResListDictionary listDictionary = rescoClient.getAllRegions();
             ResListLocation pList = rescoClient.getAllPorts("P");
             ResListLocation oList = rescoClient.getAllPorts("O");
@@ -59,6 +68,7 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
             voyageMap.put("ITINERARY_LUMINARA", luminaraItinerary);
             voyageMap.put("ITINERARY_EVRIMA", evrimaItinerary);
             voyageMap.put("VOYAGE", resListEvent);
+            voyageMap.put("REGION_ENTITY", regionArrayList);
              
             voyagePayLoad.setReader(voyageMap); 
             alreadyRead = true;
