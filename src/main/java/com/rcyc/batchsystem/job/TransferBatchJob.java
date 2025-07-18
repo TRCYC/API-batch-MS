@@ -44,14 +44,7 @@ public class TransferBatchJob {
     private ScheduledJobService scheduledJobService;
     @Autowired
     private JobStepCallbackListener jobStepCallbackListener;
-
-	/*@Bean
-	public Step transferStep(StepBuilderFactory stepBuilderFactory) {
-		return stepBuilderFactory.get("transferStep")
-				.<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>>chunk(10)
-				.reader(transferStepReader(transferReader)).processor(transferStepProcessor())
-				.writer(transferStepWriter());
-	}*/
+ 
     
     @Bean
     public Step transferStep(StepBuilderFactory stepBuilderFactory,

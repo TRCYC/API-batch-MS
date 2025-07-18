@@ -32,7 +32,6 @@ import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.RescoClient;
 import com.rcyc.batchsystem.service.ScheduledJobService;
 
-@Component
 public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Object, Transfer>> {
 
 	@Autowired
