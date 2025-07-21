@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -132,9 +131,7 @@ public class RescoClient {
 			reqListItem.setItem(item);
 			try {
 				// convertToXml(reqListItem);
-				RestTemplate rt = new RestTemplate();
-				restTemplate.getMessageConverters().add(new Jaxb2RootElementHttpMessageConverter());
-				response = rt.postForObject(
+				response = restTemplate.postForObject(
 						"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
 						reqListItem, ResListItem.class);
 
