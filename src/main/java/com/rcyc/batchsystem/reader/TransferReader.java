@@ -155,7 +155,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			eventList.addAll(hotelList.getEventList());
 			System.out.println("Total Event Size--" + eventList.size());
 			//if (eventList.stream().filter(obj -> obj.getEventId() == 897).findFirst().isPresent())
-			 eventList = new ArrayList<>(eventList.subList(0, 50));
+			// eventList = new ArrayList<>(eventList.subList(0, 50));
 			// eventList = eventList.stream().filter(obj-> obj.getEventId()==897).toList();
 			// System.out.println("Total Event Size after split--" + eventList.size());
 			ResListLocation portList = rescoClient.getAllPorts("P");
