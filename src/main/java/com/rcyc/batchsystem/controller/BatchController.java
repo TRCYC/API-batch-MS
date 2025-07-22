@@ -42,11 +42,6 @@ public class BatchController {
     @Autowired
     private Job voyageJob;
 
-    @GetMapping("/test")
-    public String testApi() {
-        return new String("Test API");
-    }
-
     @GetMapping("/region")
     public String getMethodName() {
         elasticService.getRegionData();
@@ -107,7 +102,7 @@ public class BatchController {
         return "Voyage job triggered!";
     }
 
-    @GetMapping("/test-api")
+    @GetMapping("/test")
     public String testMethod() {
         auditService.logAudit(999999l,"TEST_PROCESS_NAME",LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Test Description");
         return new String("Region");

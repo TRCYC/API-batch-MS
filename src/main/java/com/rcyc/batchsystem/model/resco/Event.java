@@ -10,12 +10,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Event {
     @XmlElement(name="Disabled")
     private int disabled;
+    @XmlElement(name = "BegEventId")
+	private String begEventId;
 
     public Event(){}
     
     public Event(int disabled){
         this.disabled = disabled;
     }
+    
+    public Event(String begEventId) {
+		this.begEventId = begEventId;
+	}
 
     public int getDisabled() {
         return disabled;
@@ -23,4 +29,12 @@ public class Event {
     public void setDisabled(int disabled) {
         this.disabled = disabled;
     }
+
+	public String getBegEventId() {
+		return begEventId;
+	}
+
+	public void setBegEventId(String begEventId) {
+		this.begEventId = begEventId;
+	}
 }

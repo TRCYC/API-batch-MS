@@ -7,6 +7,7 @@ import java.util.function.Function;
 import org.springframework.stereotype.Service;
 
 import com.rcyc.batchsystem.model.elastic.Region;
+import com.rcyc.batchsystem.model.elastic.Transfer;
 import com.rcyc.batchsystem.model.elastic.Port;
 import com.rcyc.batchsystem.model.elastic.Pricing;
 
@@ -78,6 +79,31 @@ public class ElasticService {
             System.out.println("Bulk insert successful");
         }
     }
+    
+	public void bulkInsertTransfers(List<Transfer> transfers, String indexName) throws IOException {
+		BulkRequest.Builder br = new BulkRequest.Builder();
+
+		for (Transfer transfer : transfers) {
+			br.operations(op -> op.index(idx -> idx.index(indexName)
+					.id(String.valueOf(transfer.getRescoItemID()) + String.valueOf(transfer.getVoyageId())) // optional,
+																											// can be
+																											// auto-generated
+					.document(transfer)));
+		}
+
+		BulkResponse result = client.bulk(br.build());
+
+		if (result.errors()) {
+			System.out.println("Bulk had errors");
+			result.items().forEach(item -> {
+				if (item.error() != null) {
+					System.out.println(item.error().reason());
+				}
+			});
+		} else {
+			System.out.println("Bulk insert successful");
+		}
+	}
 
     public void createTempIndex(String indexName) throws Exception {
         if (!indexExists(indexName)) {
