@@ -5,22 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBContext;
-
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.rcyc.batchsystem.model.elastic.Transfer;
 import com.rcyc.batchsystem.model.elastic.TransferItem;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
-import com.rcyc.batchsystem.model.resco.Agency;
 import com.rcyc.batchsystem.model.resco.Availability;
 import com.rcyc.batchsystem.model.resco.Event;
 import com.rcyc.batchsystem.model.resco.EventDetail;
@@ -48,14 +41,15 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
     private LocalDateTime today = LocalDateTime.now();
     private ScheduledJobService scheduledJobService;
 	
-	public TransferReader(RescoClient rescoClient, Long jobId,AuditService auditService,ScheduledJobService scheduledJobService) {
-        this.rescoClient = rescoClient;
-        this.jobId = jobId;
-        this.auditService =auditService;
-        this.scheduledJobService = scheduledJobService;
-    }
+	public TransferReader(RescoClient rescoClient, Long jobId, AuditService auditService,
+			ScheduledJobService scheduledJobService) {
+		this.rescoClient = rescoClient;
+		this.jobId = jobId;
+		this.auditService = auditService;
+		this.scheduledJobService = scheduledJobService;
+	}
 
-	class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
+	/*class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
 		private static final int THRESHOLD = 20;
 		private List<EventDetail> events;
 		private Map<String, Location> portMap;
@@ -122,20 +116,17 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			}
 			return localMap;
 		}
-
-	}
+	}*/
 
 	@Override
 	public DefaultPayLoad<Transfer, Object, Transfer> read() {
 		boolean flag = scheduledJobService.isJobAvailableForExecution(jobId, auditService);
-        if (!flag){
-            return null;
-        }
+		if (!flag) {
+			return null;
+		}
 		DefaultPayLoad<Transfer, Object, Transfer> transferPayLoad = new DefaultPayLoad<>();
-		auditService.logAudit(jobId, "feed_type", today, today, today,"Resco call initiated");
+		auditService.logAudit(jobId, "feed_type", today, today, today, "Resco call initiated");
 		try {
-			//if (alreadyRead)
-			//	return null;
 			transferPayLoad.setReader(getTransfersFromResco());
 			alreadyRead = true;
 
@@ -144,22 +135,12 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 		}
 		return transferPayLoad;
 	}
-
-	private void initializeJaxbContext() {
-		try {
-			JAXBContext.newInstance(ReqListItem.class, User.class, Agency.class, Item.class, Availability.class, Event.class);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	private Map<String, Object> getTransfersFromResco() {
 		List<EventDetail> eventList = new ArrayList<EventDetail>();
 		String[] transferTypeArr = { "BU", "XI", "TF" };
 		Map<String, Object> transferReaderMap = new HashMap<String, Object>();
 		try {
-			initializeJaxbContext();
 			ResListEvent voyageList = rescoClient.getAllVoyages(0);
 			ResListEvent hotelList = getHotelsFromResco();
 			if (voyageList.getEventList() != null && hotelList.getEventList() != null) {
@@ -177,23 +158,23 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			Map<String, Location> portmap = portList.getLocationList().getLocations().stream()
 					.collect(Collectors.toMap(Location::getCode, Function.identity()));
 
-			ForkJoinPool pool = new ForkJoinPool();
+			/*ForkJoinPool pool = new ForkJoinPool();
 			EventProcessorTask task = new EventProcessorTask(eventList, portmap, transferTypeArr);
-			transferReaderMap = pool.invoke(task);
+			transferReaderMap = pool.invoke(task);*/
 			
-			/*for (EventDetail event : eventList) {
+			for (EventDetail event : eventList) {
 				TransferItem transferItem = new TransferItem();
 				String transferTfResultStatus = "";
 				String portCode = event.getBegLocation();
 				int voyageId = event.getEventId();
 				String voyageCode = event.getCode();
-				
+
 				Location location = portmap.get(portCode);
 				if (location != null) {
 					transferItem.setPortName(location.getName());
 					transferItem.setCountryCode(location.getCode());
 				} else {
-					System.out.println("portCode not found--"+portCode);
+					System.out.println("portCode not found--" + portCode);
 					transferItem.setPortName("");
 					transferItem.setCountryCode("");
 				}
@@ -201,20 +182,18 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 				transferItem.setPortCode(portCode);
 				transferItem.setVoyageCode(voyageCode);
 
-				ResListItem reslistItemForVoyage = getTransfersByVoyage(transferTypeArr, voyageId, transferTfResultStatus);
+				ResListItem reslistItemForVoyage = getTransfersByVoyage(transferTypeArr, voyageId,
+						transferTfResultStatus);
 				transferItem.setTransferTfResultStatus(transferTfResultStatus);
-				
-				int size = 0;
-				if(reslistItemForVoyage!=null && reslistItemForVoyage.getItemList()!=null && reslistItemForVoyage.getItemList().getItemList()!=null){
+
+				if (reslistItemForVoyage != null && reslistItemForVoyage.getItemList() != null
+						&& reslistItemForVoyage.getItemList().getItemList() != null) {
 					transferItem.setItemList(reslistItemForVoyage.getItemList().getItemList());
-					size = reslistItemForVoyage.getItemList().getItemList().size();
 				} else {
 					transferItem.setItemList(new ArrayList<Item>());
 				}
-				System.out.println(
-						"VoyageCode-" + voyageCode + " ::VoyageId-" + voyageId + " ::TransferList Size--" + size);
 				transferReaderMap.put(voyageCode, transferItem);
-			}*/
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

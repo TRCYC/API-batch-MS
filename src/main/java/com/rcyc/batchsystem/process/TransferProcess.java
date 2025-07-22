@@ -17,14 +17,14 @@ import com.rcyc.batchsystem.model.resco.Item;
 import com.rcyc.batchsystem.service.AuditService;
 
 public class TransferProcess {
-	
+
 	private Long jobId;
-    private AuditService auditService;
-    
-    public TransferProcess(Long jobId,AuditService auditService){
-        this.jobId = jobId;
-        this.auditService = auditService;
-    }
+	private AuditService auditService;
+
+	public TransferProcess(Long jobId, AuditService auditService) {
+		this.jobId = jobId;
+		this.auditService = auditService;
+	}
 
 	public ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferProcessForWrite() {
 		return item -> {
@@ -45,7 +45,7 @@ public class TransferProcess {
 						System.out.println("TransferItem for the voyage is empty");
 					}
 				}
-				System.out.println("Transfer Process --" + processedList.size());
+				System.out.println("Transfer Process List Size --" + processedList.size());
 				item.setResponse(processedList); // bind back
 			}
 			return item;
