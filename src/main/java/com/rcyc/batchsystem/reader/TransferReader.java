@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.function.Function;
@@ -21,6 +22,7 @@ import com.rcyc.batchsystem.model.resco.Availability;
 import com.rcyc.batchsystem.model.resco.Event;
 import com.rcyc.batchsystem.model.resco.EventDetail;
 import com.rcyc.batchsystem.model.resco.Facility;
+import com.rcyc.batchsystem.model.resco.Item;
 import com.rcyc.batchsystem.model.resco.Location;
 import com.rcyc.batchsystem.model.resco.ReqListEvent;
 import com.rcyc.batchsystem.model.resco.ReqListItem;
@@ -50,7 +52,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
         this.scheduledJobService = scheduledJobService;
     }
 
-	class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
+	/*class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
 		private static final int THRESHOLD = 200;
 		private List<EventDetail> events;
 		private Map<String, Location> portMap;
@@ -118,7 +120,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			return localMap;
 		}
 
-	}
+	}*/
 
 	@Override
 	public DefaultPayLoad<Transfer, Object, Transfer> read() {
@@ -163,10 +165,74 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			Map<String, Location> portmap = portList.getLocationList().getLocations().stream()
 					.collect(Collectors.toMap(Location::getCode, Function.identity()));
 
-			ForkJoinPool pool = new ForkJoinPool();
+			/*ForkJoinPool pool = new ForkJoinPool();
 			EventProcessorTask task = new EventProcessorTask(eventList, portmap, transferTypeArr);
-			transferReaderMap = pool.invoke(task);
-		} catch (Exception e) {
+			transferReaderMap = pool.invoke(task);*/
+			
+			for (EventDetail event : eventList) {
+				TransferItem transferItem = new TransferItem();
+				String transferTfResultStatus = "";
+				// List<Item> itemList = new ArrayList<Item>();
+				String portCode = event.getBegLocation();
+				int voyageId = event.getEventId();
+				String voyageCode = event.getCode();
+				//String countryCode = "";
+				//String portName = "";
+				
+				Location location = portmap.get(portCode);
+				if (location != null) {
+					transferItem.setPortName(location.getName());
+					transferItem.setCountryCode(location.getCode());
+				} else {
+					System.out.println("portCode not found--"+portCode);
+					transferItem.setPortName("");
+					transferItem.setCountryCode("");
+				}
+				transferItem.setVoyageId(voyageId);
+				transferItem.setPortCode(portCode);
+				transferItem.setVoyageCode(voyageCode);
+
+				ResListItem reslistItemForVoyage = getTransfersByVoyage(transferTypeArr, voyageId, transferTfResultStatus);
+				transferItem.setTransferTfResultStatus(transferTfResultStatus);
+				
+				/*ResListItem reslistItemBU = getTransfersByVoyage("BU", voyageId);// TRANSFER_BUS_GROUP_TYPE
+				ResListItem reslistItemXI = getTransfersByVoyage("XI", voyageId);// TRANSFER_TAXI_GROUP_TYPE
+				ResListItem reslistItemTF = getTransfersByVoyage("TF", voyageId);
+
+				if (reslistItemBU != null && reslistItemBU.getItemList() != null
+						&& reslistItemBU.getItemList().getItemList() != null) {
+					System.out.println("Transfers BU size - " + reslistItemBU.getItemList().getItemList().size());
+					itemList.addAll(reslistItemBU.getItemList().getItemList());
+				}
+				if (reslistItemXI != null && reslistItemXI.getItemList() != null
+						&& reslistItemXI.getItemList().getItemList() != null) {
+					System.out.println("Transfers XI size - " + reslistItemXI.getItemList().getItemList().size());
+					itemList.addAll(reslistItemXI.getItemList().getItemList());
+				}
+				if (reslistItemTF != null) {
+					transferItem.setTransferTfResultStatus(reslistItemTF.getResult().getStatus());
+
+					if (reslistItemTF.getItemList() != null && reslistItemTF.getItemList().getItemList() != null) {
+						System.out.println("Transfers TF size" + reslistItemTF.getItemList().getItemList().size());
+						itemList.addAll(reslistItemTF.getItemList().getItemList());
+					}
+				}*/
+				
+			int size = 0;
+				if(reslistItemForVoyage!=null && reslistItemForVoyage.getItemList()!=null && reslistItemForVoyage.getItemList().getItemList()!=null){
+					transferItem.setItemList(reslistItemForVoyage.getItemList().getItemList());
+					size = reslistItemForVoyage.getItemList().getItemList().size();
+				} else {
+					transferItem.setItemList(new ArrayList<Item>());
+				}
+				System.out.println(
+						"VoyageCode-" + voyageCode + " ::VoyageId-" + voyageId + " ::TransferList Size--" + size);
+				// transferReaderList.add(transferItem);
+				//transferItem.setItemList(itemList);
+				// System.out.println("transferItem --"+transferItem.toString());
+				transferReaderMap.put(voyageCode, transferItem);
+			}
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return transferReaderMap;
