@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Item")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Item {
 
 	private String comments;
