@@ -125,13 +125,14 @@ public class RescoClient {
 		reqListItem.setEvent(new Event(String.valueOf(voyageId)));
 		ResListItem response = new ResListItem();
 		List<Item> itemList = new ArrayList<Item>();
+		RestTemplate rt = new RestTemplate();
 		for(String type: typeArr) {
 			Item item = new Item();
 			item.setGroupType(type);
 			reqListItem.setItem(item);
 			try {
 				// convertToXml(reqListItem);
-				response = restTemplate.postForObject(
+				response = rt.postForObject(
 						"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
 						reqListItem, ResListItem.class);
 
