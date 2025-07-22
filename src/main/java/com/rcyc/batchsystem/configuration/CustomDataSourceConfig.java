@@ -1,21 +1,21 @@
 package com.rcyc.batchsystem.configuration;
 
-import com.rcyc.batchsystem.util.CryptoUtil;
-import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+// import com.rcyc.batchsystem.util.CryptoUtil;
+// import com.zaxxer.hikari.HikariDataSource;
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
+// import javax.sql.DataSource;
 
-@Configuration
-public class CustomDataSourceConfig {
+// @Configuration
+// public class CustomDataSourceConfig {
 
-    @Value("${db.driver}")
-    private String databaseDriver;
-    private String databaseUrl;
-    private String databaseUsername;
-    private String databasePassword;
+    // @Value("${db.driver}")
+    // private String databaseDriver;
+    // private String databaseUrl;
+    // private String databaseUsername;
+    // private String databasePassword;
 
 //     private String getDecryptedEnv(String envVar) {
 //         String value = System.getenv(envVar); 
@@ -43,14 +43,14 @@ public class CustomDataSourceConfig {
 //         return databasePassword;
 //     }
 
-    @Bean
-    public DataSource dataSource() {
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(databaseDriver);
-        dataSource.setJdbcUrl(getDatabaseUrl());
-        dataSource.setUsername(getDatabaseUsername());
-        dataSource.setPassword(getDatabasePassword());
-        System.out.println(dataSource.getJdbcUrl());
-        return dataSource;
-    }
-} 
+    // @Bean
+    // public DataSource dataSource() {
+    //     HikariDataSource dataSource = new HikariDataSource();
+    //     dataSource.setDriverClassName(databaseDriver);
+    //     dataSource.setJdbcUrl(getDatabaseUrl());
+    //     dataSource.setUsername(getDatabaseUsername());
+    //     dataSource.setPassword(getDatabasePassword());
+    //     System.out.println(dataSource.getJdbcUrl());
+    //     return dataSource;
+    // }
+// } 
