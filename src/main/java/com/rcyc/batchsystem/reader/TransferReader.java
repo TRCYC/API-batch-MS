@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXBContext;
 
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +53,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 		this.scheduledJobService = scheduledJobService;
 	}
 
-	/*class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
+	class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
 		private static final int THRESHOLD = 20;
 		private List<EventDetail> events;
 		private Map<String, Location> portMap;
@@ -116,7 +120,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			}
 			return localMap;
 		}
-	}*/
+	}
 
 	@Override
 	public DefaultPayLoad<Transfer, Object, Transfer> read() {
@@ -151,18 +155,21 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			eventList.addAll(hotelList.getEventList());
 			System.out.println("Total Event Size--" + eventList.size());
 			//if (eventList.stream().filter(obj -> obj.getEventId() == 897).findFirst().isPresent())
-			// eventList = new ArrayList<>(eventList.subList(0, 50));
+			 eventList = new ArrayList<>(eventList.subList(0, 50));
 			// eventList = eventList.stream().filter(obj-> obj.getEventId()==897).toList();
 			// System.out.println("Total Event Size after split--" + eventList.size());
 			ResListLocation portList = rescoClient.getAllPorts("P");
 			Map<String, Location> portmap = portList.getLocationList().getLocations().stream()
 					.collect(Collectors.toMap(Location::getCode, Function.identity()));
 
-			/*ForkJoinPool pool = new ForkJoinPool();
-			EventProcessorTask task = new EventProcessorTask(eventList, portmap, transferTypeArr);
-			transferReaderMap = pool.invoke(task);*/
+			JAXBContext context = JAXBContext.newInstance(ReqListItem.class);
+			System.out.println("JAXBContext implementation: " + context.getClass().getName());
 			
-			for (EventDetail event : eventList) {
+			ForkJoinPool pool = new ForkJoinPool();
+			EventProcessorTask task = new EventProcessorTask(eventList, portmap, transferTypeArr);
+			transferReaderMap = pool.invoke(task);
+						
+			/*for (EventDetail event : eventList) {
 				TransferItem transferItem = new TransferItem();
 				String transferTfResultStatus = "";
 				String portCode = event.getBegLocation();
@@ -174,7 +181,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 					transferItem.setPortName(location.getName());
 					transferItem.setCountryCode(location.getCode());
 				} else {
-					System.out.println("portCode not found--" + portCode);
+					System.out.println("portCode--"  + portCode + "  not found for --" + voyageId);
 					transferItem.setPortName("");
 					transferItem.setCountryCode("");
 				}
@@ -193,7 +200,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 					transferItem.setItemList(new ArrayList<Item>());
 				}
 				transferReaderMap.put(voyageCode, transferItem);
-			}
+			}*/
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
