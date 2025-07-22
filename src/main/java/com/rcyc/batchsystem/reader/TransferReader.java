@@ -54,7 +54,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 	}
 
 	class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
-		private static final int THRESHOLD = 20;
+		private static final int THRESHOLD = 100;
 		private List<EventDetail> events;
 		private Map<String, Location> portMap;
 		private String[] transferTypeArr;
@@ -162,8 +162,8 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 			Map<String, Location> portmap = portList.getLocationList().getLocations().stream()
 					.collect(Collectors.toMap(Location::getCode, Function.identity()));
 
-			JAXBContext context = JAXBContext.newInstance(ReqListItem.class);
-			System.out.println("JAXBContext implementation: " + context.getClass().getName());
+			// JAXBContext context = JAXBContext.newInstance(ReqListItem.class);
+			// System.out.println("JAXBContext implementation: " + context.getClass().getName());
 			
 			ForkJoinPool pool = new ForkJoinPool();
 			EventProcessorTask task = new EventProcessorTask(eventList, portmap, transferTypeArr);
