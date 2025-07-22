@@ -139,8 +139,6 @@ public class RescoClient {
 					if (type.equals("TF"))
 						transferTfResultStatus = response.getResult().getStatus();
 					if (response.getItemList() != null && response.getItemList().getItemList() != null) {
-						System.out.println(
-								"Transfer size - " + type + " -" + response.getItemList().getItemList().size());
 						itemList.addAll(response.getItemList().getItemList());
 					}
 				}
@@ -150,11 +148,6 @@ public class RescoClient {
 		}
 		}
 		response.getItemList().setItemList(itemList);
-		/*if (response.getItemList() != null) {
-			if (response.getItemList().getItemList() != null)
-				System.out.println(response.getItemList().getItemList().size());
-		} else
-			System.out.println("response getItemList is null");*/
 		return response;
 	}
     private User getUser(){
