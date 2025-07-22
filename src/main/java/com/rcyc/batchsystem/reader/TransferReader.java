@@ -11,6 +11,8 @@ import java.util.concurrent.RecursiveTask;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.JAXBContext;
+
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 import com.rcyc.batchsystem.model.elastic.Transfer;
 import com.rcyc.batchsystem.model.elastic.TransferItem;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
+import com.rcyc.batchsystem.model.resco.Agency;
 import com.rcyc.batchsystem.model.resco.Availability;
 import com.rcyc.batchsystem.model.resco.Event;
 import com.rcyc.batchsystem.model.resco.EventDetail;
@@ -142,12 +145,21 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
 		return transferPayLoad;
 	}
 
+	private void initializeJaxbContext() {
+		try {
+			JAXBContext.newInstance(ReqListItem.class, User.class, Agency.class, Item.class, Availability.class, Event.class);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private Map<String, Object> getTransfersFromResco() {
 		List<EventDetail> eventList = new ArrayList<EventDetail>();
 		String[] transferTypeArr = { "BU", "XI", "TF" };
 		Map<String, Object> transferReaderMap = new HashMap<String, Object>();
 		try {
-
+			initializeJaxbContext();
 			ResListEvent voyageList = rescoClient.getAllVoyages(0);
 			ResListEvent hotelList = getHotelsFromResco();
 			if (voyageList.getEventList() != null && hotelList.getEventList() != null) {
