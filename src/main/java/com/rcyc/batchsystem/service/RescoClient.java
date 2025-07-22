@@ -37,6 +37,8 @@ public class RescoClient {
 
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restCustomTemplate;
 
     public ResListDictionary getAllRegions(){ 
         Dictionary dictionary = new Dictionary("RGN", 0);
@@ -132,7 +134,7 @@ public class RescoClient {
 			reqListItem.setItem(item);
 			try {
 				// convertToXml(reqListItem);
-				response = restTemplate.postForObject(
+				response = restCustomTemplate.postForObject(
 						"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
 						reqListItem, ResListItem.class);
 
