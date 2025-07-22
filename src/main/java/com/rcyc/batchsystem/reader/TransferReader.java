@@ -53,7 +53,7 @@ public class TransferReader implements ItemReader<DefaultPayLoad<Transfer, Objec
     }
 
 	class EventProcessorTask extends RecursiveTask<Map<String, Object>> {
-		private static final int THRESHOLD = 200;
+		private static final int THRESHOLD = 20;
 		private List<EventDetail> events;
 		private Map<String, Location> portMap;
 		private String[] transferTypeArr;
