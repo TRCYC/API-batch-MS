@@ -13,6 +13,7 @@ import com.rcyc.batchsystem.entity.RegionEntity;
 import com.rcyc.batchsystem.model.elastic.Voyage;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.EventDetail;
+import com.rcyc.batchsystem.model.resco.ResListCategory;
 import com.rcyc.batchsystem.model.resco.ResListDictionary;
 import com.rcyc.batchsystem.model.resco.ResListEvent;
 import com.rcyc.batchsystem.model.resco.ResListItinerary;
@@ -54,7 +55,9 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
             ResListLocation oList = rescoClient.getAllPorts("O");
             ResListItinerary evrimaItinerary = rescoClient.getAllItinerariesByFacility(12l);
             ResListItinerary ilmaItinerary = rescoClient.getAllItinerariesByFacility(13l);
-            ResListItinerary luminaraItinerary = rescoClient.getAllItinerariesByFacility(93l);
+            ResListItinerary luminaraItinerary = rescoClient.getAllItinerariesByFacility(93l); 
+            String[] currencies = {"USD", "EUR", "GBP", "AUD"};
+            Map<String, List<ResListCategory>> allSuites = RescoReaderUtil.fetchCategoriesByCurrency(rescoClient, dateRanges, currencies);
             
 
             ResListEvent resListEvent = rescoClient.getAllVoyages(1);
@@ -69,6 +72,8 @@ public class VoyageReader implements ItemReader<DefaultPayLoad<Voyage, Object, V
             voyageMap.put("ITINERARY_EVRIMA", evrimaItinerary);
             voyageMap.put("VOYAGE", resListEvent);
             voyageMap.put("REGION_ENTITY", regionArrayList);
+            voyageMap.put("SUITES",allSuites);
+
              
             voyagePayLoad.setReader(voyageMap); 
             alreadyRead = true;

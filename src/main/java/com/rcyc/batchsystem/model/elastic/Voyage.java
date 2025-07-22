@@ -2,6 +2,7 @@ package com.rcyc.batchsystem.model.elastic;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.rcyc.batchsystem.model.elastic.VoyageLogstashFinish;
 import com.rcyc.batchsystem.model.elastic.FeedStartDate;
@@ -10,7 +11,7 @@ import com.rcyc.batchsystem.model.elastic.PortData;
 public class Voyage {
     private String portCode;
     private String yachtName;
-    private List<String> portCodes;
+    private Set<String> portCodes;
     private int nights;
     private long voyageEndDate;
     private String voyageType;
@@ -40,7 +41,7 @@ public class Voyage {
     private int yachtId;
     private String voyageDisembarkRegion;
     private String voyageEmbarkRegion;
-    private List<String> ports;
+    private Set<String> ports;
     private int eventId;
 
     // Getters and setters for all fields
@@ -48,8 +49,8 @@ public class Voyage {
     public void setPortCode(String portCode) { this.portCode = portCode; }
     public String getYachtName() { return yachtName; }
     public void setYachtName(String yachtName) { this.yachtName = yachtName; }
-    public List<String> getPortCodes() { return portCodes; }
-    public void setPortCodes(List<String> portCodes) { this.portCodes = portCodes; }
+    public Set<String> getPortCodes() { return portCodes; }
+    public void setPortCodes(Set<String> portCodes) { this.portCodes = portCodes; }
     public int getNights() { return nights; }
     public void setNights(int nights) { this.nights = nights; }
     public long getVoyageEndDate() { return voyageEndDate; }
@@ -108,8 +109,8 @@ public class Voyage {
     public void setVoyageDisembarkRegion(String voyageDisembarkRegion) { this.voyageDisembarkRegion = voyageDisembarkRegion; }
     public String getVoyageEmbarkRegion() { return voyageEmbarkRegion; }
     public void setVoyageEmbarkRegion(String voyageEmbarkRegion) { this.voyageEmbarkRegion = voyageEmbarkRegion; }
-    public List<String> getPorts() { return ports; }
-    public void setPorts(List<String> ports) { this.ports = ports; }
+    public Set<String> getPorts() { return ports; }
+    public void setPorts(Set<String> ports) { this.ports = ports; }
     public int getEventId() {
         return eventId;
     }
