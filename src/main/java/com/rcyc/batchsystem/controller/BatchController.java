@@ -43,6 +43,8 @@ public class BatchController {
     private Job voyageJob;
     @Autowired
     private Job transferJob;
+    @Autowired
+    private Job suiteJob;
 
     @GetMapping("/region")
     public String getMethodName() {
@@ -133,6 +135,20 @@ public class BatchController {
         auditService.logAudit(999999l,"TEST_PROCESS_NAME",LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Test Description");
         return new String("Region");
     }
+
+    @GetMapping("/run-suite-job/{jobId}")
+    public String suiteJob(@PathVariable Long jobId) throws Exception {
+        Long t1 = System.currentTimeMillis();
+        JobParameters params = new JobParametersBuilder()
+                .addLong("jobId", jobId)
+                .toJobParameters();
+        jobLauncher.run(suiteJob, params);
+        Long t2 = System.currentTimeMillis();
+        System.out.println("Duration--" + (t2-t1));
+        return "Suite job triggered!";
+    }
+
+
 
   
 }

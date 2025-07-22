@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 
+import com.rcyc.batchsystem.model.elastic.*;
 import org.springframework.stereotype.Service;
-
-import com.rcyc.batchsystem.model.elastic.Region;
-import com.rcyc.batchsystem.model.elastic.Transfer;
-import com.rcyc.batchsystem.model.elastic.Port;
-import com.rcyc.batchsystem.model.elastic.Pricing;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
@@ -104,6 +100,33 @@ public class ElasticService {
 			System.out.println("Bulk insert successful");
 		}
 	}
+
+    public void bulkInsertSuite(List<Suite> suites, String indexName) throws IOException {
+        BulkRequest.Builder br = new BulkRequest.Builder();
+
+        for (Suite suite : suites) {
+            br.operations(op -> op
+                    .index(idx -> idx
+                            .index(indexName)
+                            .id(suite.getVoyageId() != null ? suite.getVoyageId().toString() : null)
+                            .document(suite)
+                    )
+            );
+        }
+
+        BulkResponse result = client.bulk(br.build());
+
+        if (result.errors()) {
+            System.out.println("Bulk insert had errors");
+            result.items().forEach(item -> {
+                if (item.error() != null) {
+                    System.out.println("Error: " + item.error().reason());
+                }
+            });
+        } else {
+            System.out.println("Bulk insert for Suite successful. Inserted: " + suites.size());
+        }
+    }
 
     public void createTempIndex(String indexName) throws Exception {
         if (!indexExists(indexName)) {

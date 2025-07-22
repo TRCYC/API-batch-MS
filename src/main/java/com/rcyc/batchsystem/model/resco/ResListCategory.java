@@ -19,7 +19,9 @@ public class ResListCategory {
     @XmlElementWrapper(name = "CategoryList")
     @XmlElement(name = "Category")
     private List<Category> categoryList;
+
     private String cruiseCode;
+    private String cruiseId;
 
     public Result getResult() { return result; }
     public void setResult(Result result) { this.result = result; }
@@ -30,5 +32,12 @@ public class ResListCategory {
     }
     public void setCruiseCode(String cruiseCode) {
         this.cruiseCode = cruiseCode;
+    }
+    public String getCruiseId() {
+        return cruiseId;
+    }
+
+    public void setCruiseId(String cruiseId) {
+        this.cruiseId = cruiseId;
     }
 } 
