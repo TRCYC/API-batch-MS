@@ -27,7 +27,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<!-- <msversion>1.0.0</msversion> -->
+		<msversion>1.0.0</msversion>
 	</properties>
 	<dependencies>
 
@@ -103,6 +103,17 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<version>8.2.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -117,12 +128,21 @@
 
 
 	<build>
+		<finalName>rcyc-batch-ms-${msversion}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+					  <goals>
+						<goal>repackage</goal>
+					  </goals>
+					</execution>
+				  </executions>
 			</plugin>
 		</plugins>
 	</build>
+	
 
 </project>

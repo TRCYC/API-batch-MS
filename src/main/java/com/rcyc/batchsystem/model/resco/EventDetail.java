@@ -66,6 +66,8 @@ public class EventDetail {
     private List<Region> regionList;
     @XmlElement(name = "Comments")
     private String comments; 
+    @XmlElement(name="TypeCode")
+    private String typeCode;
     public EventDetail() {}
 
     public int getEventId() {
@@ -282,6 +284,14 @@ public class EventDetail {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     } 
 
     
