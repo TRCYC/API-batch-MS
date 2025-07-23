@@ -5,11 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
-import com.rcyc.batchsystem.model.resco.Rate;
-import com.rcyc.batchsystem.model.resco.TravelerFee;
-import com.rcyc.batchsystem.model.resco.Surcharge;
-import com.rcyc.batchsystem.model.resco.Category;
+import java.util.List; 
 
 @XmlRootElement(name = "ResListCategory")
 @XmlAccessorType(XmlAccessType.FIELD)

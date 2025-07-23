@@ -24,11 +24,6 @@ import com.rcyc.batchsystem.writer.RegionWriter;
 @Configuration
 public class RegionBatchJob {
 
-    // @Autowired
-    // private RegionProcess regionProcess;
-    // @Autowired
-    // private RegionWriter regionWriter;
-
     @Autowired
     private RescoClient rescoClient;
     @Autowired
@@ -41,17 +36,6 @@ public class RegionBatchJob {
     private ScheduledJobService scheduledJobService;
     @Autowired
     private JobStepCallbackListener jobStepCallbackListener;
-
-    // @Bean
-    // public Step regionStep(StepBuilderFactory stepBuilderFactory,
-    // ItemReader<RegionPayLoad> regionStepReader) {
-    // return stepBuilderFactory.get("regionStep")
-    // .<RegionPayLoad, RegionPayLoad>chunk(10)
-    // .reader(regionStepReader)
-    // .processor(regionStepProcessor())
-    // .writer(regionStepWriter())
-    // .build();
-    // }
 
     @Bean
     @StepScope

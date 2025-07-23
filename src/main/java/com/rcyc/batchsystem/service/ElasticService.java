@@ -159,6 +159,11 @@ public class ElasticService {
         // bulkInsert(voyages, indexName, v -> String.valueOf(v.getEventId()));
     }
 
+      public void bulkInsertExcursionVoyages(List<com.rcyc.batchsystem.model.elastic.ExcursionVoyage> excursionVoyages, String indexName)
+            throws IOException {
+        bulkInsert(excursionVoyages, indexName, v -> String.valueOf(v.getId()));
+    }
+
     public long getDocumentCount(String index) {
         try {
             CountResponse response = client.count(c -> c.index(index));
