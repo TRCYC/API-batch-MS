@@ -6,22 +6,18 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import com.rcyc.batchsystem.model.elastic.Region;
+import org.springframework.batch.item.UnexpectedInputException; 
 import com.rcyc.batchsystem.model.job.RegionPayLoad;
 import com.rcyc.batchsystem.model.resco.ResListDictionary;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.RescoClient;
 import com.rcyc.batchsystem.service.ScheduledJobService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
  
 public class RegionApiReader implements ItemReader<RegionPayLoad> {
-
+    private static final Logger logger = LoggerFactory.getLogger(RegionApiReader.class);
     
     private final RescoClient rescoClient;
     private final Long jobId;
@@ -45,6 +41,7 @@ public class RegionApiReader implements ItemReader<RegionPayLoad> {
         try {
             boolean flag = scheduledJobService.isJobAvailableForExecution(jobId, auditService);
             if (!flag){
+                logger.info("Condition failed, so reader return null, trying to exit from job");
                 return null;
             }
                 

@@ -58,11 +58,22 @@ public class BatchJobConfig {
                 .build();
     }
 
+
     @Bean
     public Job suiteJob(JobBuilderFactory jobBuilderFactory, Step suiteStep) {
         return jobBuilderFactory.get("suiteJob")
                 .start(suiteStep)
                 .build();
     }
+
+
+      @Bean
+    public Job excursionVoyageJob(JobBuilderFactory jobBuilderFactory, Step excursionVoyageStep) {
+        return jobBuilderFactory.get("excursionVoyageJob")
+                .start(excursionVoyageStep)
+                .build();
+    }
+
+    
 
 }

@@ -5,17 +5,18 @@ import java.time.LocalDateTime;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.scope.context.StepSynchronizationManager;
+import org.aspectj.lang.annotation.Before; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rcyc.batchsystem.service.AuditService;
 
 @Aspect
 @Component
 public class AuditAspect {
+    private static final Logger logger = LoggerFactory.getLogger(AuditAspect.class);
 
     @Autowired
     private AuditService auditService;
@@ -23,6 +24,7 @@ public class AuditAspect {
     @Before("execution(* com.rcyc.batchsystem.reader..*.read(..))")
     public void logReader(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
+        logger.info("System call reader :"+jobId);
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
                     "System call reader");
@@ -31,6 +33,7 @@ public class AuditAspect {
     @Before("execution(* com.rcyc.batchsystem.process..*.*(..))")
     public void logProcessor(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
+        logger.info("System call processor :"+jobId);
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
                     "System call processor");
@@ -40,6 +43,7 @@ public class AuditAspect {
     @Before("execution(* com.rcyc.batchsystem.writer..*.write(..))")
     public void logWriter(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
+        logger.info("System call writer :"+jobId);
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
                     "System call writer");
@@ -48,6 +52,7 @@ public class AuditAspect {
     @After("execution(* com.rcyc.batchsystem.reader..*.read(..))")
     public void logAferReader(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
+        logger.info("Leaving from reader :"+jobId);
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
                     "Leaving from reader");
@@ -56,6 +61,7 @@ public class AuditAspect {
     @After("execution(* com.rcyc.batchsystem.process..*.*(..))")
     public void logAfterProcessor(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
+        logger.info("Leaving from processor :"+jobId);
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
                     "Leaving from processor");
@@ -65,6 +71,7 @@ public class AuditAspect {
     @After("execution(* com.rcyc.batchsystem.writer..*.write(..))")
     public void logAfterWriter(JoinPoint joinPoint) {
         Long jobId = getCurrentJobId();
+        logger.info("Leaving from writer :"+jobId);
         if (jobId != null)
             auditService.logAudit(jobId, "feed_type", LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(),
                     "Leaving from writer");
