@@ -14,7 +14,8 @@ public class Pricing {
     private String ageCategory;
     private String categoryName;
     private Long pricePerson1;
-    
+    private String priceCurrency;
+    private long rateId;
 
     public String getPricingId() { return pricingId; }
     public void setPricingId(String pricingId) { this.pricingId = pricingId; }
@@ -47,6 +48,18 @@ public class Pricing {
     public Long getPricePerson1() { return pricePerson1; }
     public void setPricePerson1(Long pricePerson1) { this.pricePerson1 = pricePerson1; }
 
+    public String getPriceCurrency() {
+        return priceCurrency;
+    }
+    public void setPriceCurrency(String priceCurrency) {
+        this.priceCurrency = priceCurrency;
+    }
+    public long getRateId() {
+        return rateId;
+    }
+    public void setRateId(long rateId) {
+        this.rateId = rateId;
+    }
     @Override
     public String toString() {
         return "Pricing [pricingId=" + pricingId + ", price=" + price + ", currency=" + currency + ", description=" + description + "]";

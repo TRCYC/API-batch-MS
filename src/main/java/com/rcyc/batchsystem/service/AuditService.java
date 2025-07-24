@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AuditService {
+    private static final Logger logger = LoggerFactory.getLogger(AuditService.class);
     @Autowired
     private RcycAuditRepository auditRepository;
 
@@ -30,6 +33,7 @@ public class AuditService {
         audit.setResponseTime(responseTime);
         audit.setUpdatedTime(updatedTime);
         audit.setDescription(description);
+        logger.info(jobId +" - "+audit.getProcessName()+" - "+description);
         return auditRepository.save(audit);
     }
 
@@ -41,6 +45,7 @@ public class AuditService {
         audit.setResponseTime(LocalDateTime.now());
         audit.setUpdatedTime(LocalDateTime.now());
         audit.setDescription(description);
+        logger.info(jobId +" - "+audit.getProcessName()+" - "+description);
         return auditRepository.save(audit);
     }
 
