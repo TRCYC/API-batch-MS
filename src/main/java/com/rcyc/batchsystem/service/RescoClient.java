@@ -74,6 +74,7 @@ public class RescoClient {
         return resListEvent;
     }
 
+
     public ResListEvent getHotels(ReqListEvent reqListEvent) {
         System.out.println("Resco calling For Hotel");
         ResListEvent resListEvent = restTemplate.postForObject(
@@ -127,6 +128,29 @@ public class RescoClient {
                 "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
                 req,
                 ResListCategory.class);
+    }
+
+
+    public ResListCategory getSuiteCategory(String eventId){
+        System.out.println(" Event >>"+eventId);
+        ReqListCategory req = new ReqListCategory();
+
+        Agency agency = new Agency();
+        agency.setAgentId("40622"); // Replace with actual agent id or inject as needed
+
+        Category category = new Category();
+        category.setEventId(eventId);
+
+        req.setUser(getUser());
+        req.setAgency(agency);
+        req.setCategory(category);
+
+        return restTemplate.postForObject(
+                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+                req,
+                ResListCategory.class
+        );
+
     }
 
     public ResListItem getTransferArr(String[] typeArr, int voyageId, String transferTfResultStatus) {
