@@ -32,7 +32,7 @@ public class SuiteProcess {
                 System.out.println("From Reader ReSize "+allCategories.size());
                 List<Suite> allSuites = mapCategoriesToSuite(allCategories);
                 item.setResponse(allSuites);
-                System.out.println("Suite Size "+allSuites.size());
+                System.out.println("Suite Size after process--- "+allSuites.size());
                 return item;
             }
             return null;

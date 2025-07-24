@@ -49,7 +49,9 @@ public class SuiteReader implements ItemReader<DefaultPayLoad<Suite, Object, Sui
 
             List<ResListCategory> suiteCategories = new ArrayList<>();
             for (EventDetail event : eventList) {
-                System.out.println("Fetching suites for voyageCode: " + event.getEventId());
+                int voyageId = event.getEventId();
+                String voyageCode = event.getCode();
+                System.out.println("VoyageCode-" + voyageCode + " ::VoyageId-" + voyageId);
                 ResListCategory resListCategory = rescoClient.getSuiteCategory(String.valueOf(event.getEventId()));
                 resListCategory.setCruiseCode(event.getCode());
                 resListCategory.setCruiseId(String.valueOf(event.getEventId()));
