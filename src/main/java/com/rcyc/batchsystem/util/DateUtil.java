@@ -15,8 +15,12 @@ public class DateUtil {
     }
 
     public static String rubyToJavaForEpochMilli(String tempDate) {
-        ZonedDateTime zdt = ZonedDateTime.parse(tempDate, DateTimeFormatter.ISO_DATE_TIME);
-        return String.valueOf(zdt.toInstant().toEpochMilli());
+        System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+tempDate);
+          if (tempDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        tempDate = tempDate + "T00:00:00Z"; // Set time to midnight UTC
+    }
+    ZonedDateTime zdt = ZonedDateTime.parse(tempDate, DateTimeFormatter.ISO_DATE_TIME);
+    return String.valueOf(zdt.toInstant().toEpochMilli());
 
     }
 

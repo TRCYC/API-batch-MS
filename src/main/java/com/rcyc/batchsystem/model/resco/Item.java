@@ -1,43 +1,120 @@
 package com.rcyc.batchsystem.model.resco;
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "Item")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Item {
-
+@XmlElement(name = "Comments")
 	private String comments;
+	@XmlElement(name = "BookingId")
 	private String bookingId;
+	@XmlElement(name = "EventId")
 	private String eventId;
+	@XmlElement(name = "ItemId")
 	private String itemId;
+	@XmlElement(name = "Details")
 	private String details;
+	@XmlElement(name = "BegDate")
 	private String begDate;
+	@XmlElement(name = "Type")
 	private String type;
+	@XmlElement(name = "Amount")
 	private String amount;
+	@XmlElement(name = "SaleId")
 	private String saleId;
+	@XmlElement(name = "EndDate")
 	private String endDate;
+	@XmlElement(name = "TripId")
 	private String tripId;
+	@XmlElement(name = "TransactionId")
 	private String transactionId;
+	@XmlElement(name = "Reason")
 	private String reason;
+	@XmlElement(name = "GroupType")
 	private String groupType;
+	@XmlElement(name = "Rate")
 	private String rate;
+	@XmlElement(name = "Surcharges")
 	private String surcharges;
+	@XmlElement(name = "Items")
 	private String items;
+	@XmlElement(name = "Media")
 	private String media;
+	@XmlElement(name = "Code")
 	private String code;
+	@XmlElement(name = "Name")
 	private String name;
+	@XmlElement(name = "Sort")
 	private String sort;
+	@XmlElement(name = "AvailItems")
 	private String availItems;
+	@XmlElement(name = "ItemTypeCode")
 	private String itemTypeCode;
+	@XmlElement(name = "ItemTypeName")
 	private String itemTypeName;
+	@XmlElement(name = "DeliveryType")
 	private String deliveryType;
+	@XmlElement(name = "GroupCode")
 	private String groupCode;
+	@XmlElement(name = "GroupName")
 	private String groupName;
+	@XmlElement(name = "BandCode")
 	private String bandCode;
+	@XmlElement(name = "BandName")
 	private String bandName;
+	@XmlElement(name = "Flex01")
+	private String flex01;
+	@XmlElement(name = "Flex02")
+	private String flex02;
+	@XmlElement(name = "Flex03")
+	private String flex03;
+    @XmlElement(name = "Flex04")
+	private String flex04;
+	@XmlElement(name = "FolioId")
 	private String folioId;
+	@XmlElement(name="InfoText")
+	private String infoText;
+    @XmlElement(name="PortName")
+	private String portName;    
+ 	@XmlElement(name="PortRegion")
+	private String portRegion;   
+	@XmlElement(name="Country")
+	private String country;   
+@XmlElement(name="Duration")
 	private String duration;
+	@XmlElement(name="DurationHours")
 	private String durationHours;
 
-	@XmlElement(name = "FolioId")
+	@XmlElement(name = "Events")
+	private int events;
+
+	@XmlElement(name = "Locations")
+	private int locations;
+	@XmlElement(name = "ExternalId")
+	private String externalId;
+	@XmlElementWrapper(name = "RateList")
+	@XmlElement(name = "Rate")
+	private List<Rate> rateList;
+	@XmlElementWrapper(name = "PageList")
+	@XmlElement(name = "Page")
+	private List<Page> pageList;
+
+	@XmlElementWrapper(name = "FlexItemList")
+	@XmlElement(name = "FlexItem")
+	private List<FlexItem> flexItemList;
+
+	
+	@XmlElementWrapper(name = "BegLocationList")
+	@XmlElement(name = "BegLocation")
+	private List<BegLocation> begLocationList;
+
 	public String getFolioId() {
 		return folioId;
 	}
@@ -75,11 +152,20 @@ public class Item {
 		this.itemId = itemId;
 		this.details = details;
 	}
+	
+
+	public String getInfoText() {
+		return infoText;
+	}
+
+	public void setInfoText(String infoText) {
+		this.infoText = infoText;
+	}
 
 	/**
 	 * @return the comments
 	 */
-	@XmlElement(name = "Comments")
+	
 	public String getComments() {
 		return comments;
 	}
@@ -94,7 +180,7 @@ public class Item {
 	/**
 	 * @return the bookingId
 	 */
-	@XmlElement(name = "BookingId")
+	
 	public String getBookingId() {
 		return bookingId;
 	}
@@ -109,7 +195,7 @@ public class Item {
 	/**
 	 * @return the eventId
 	 */
-	@XmlElement(name = "EventId")
+	
 	public String getEventId() {
 		return eventId;
 	}
@@ -124,7 +210,7 @@ public class Item {
 	/**
 	 * @return the itemId
 	 */
-	@XmlElement(name = "ItemId")
+	
 	public String getItemId() {
 		return itemId;
 	}
@@ -139,7 +225,7 @@ public class Item {
 	/**
 	 * @return the details
 	 */
-	@XmlElement(name = "Details")
+	
 	public String getDetails() {
 		return details;
 	}
@@ -154,7 +240,7 @@ public class Item {
 	/**
 	 * @return the begDate
 	 */
-	@XmlElement(name = "BegDate")
+	
 	public String getBegDate() {
 		return begDate;
 	}
@@ -169,7 +255,7 @@ public class Item {
 	/**
 	 * @return the type
 	 */
-	@XmlElement(name = "Type")
+	
 	public String getType() {
 		return type;
 	}
@@ -184,7 +270,6 @@ public class Item {
 	/**
 	 * @return the amount
 	 */
-	@XmlElement(name = "Amount")
 	public String getAmount() {
 		return amount;
 	}
@@ -199,7 +284,7 @@ public class Item {
 	/**
 	 * @return the saleId
 	 */
-	@XmlElement(name = "SaleId")
+	
 	public String getSaleId() {
 		return saleId;
 	}
@@ -214,7 +299,6 @@ public class Item {
 	/**
 	 * @return the endDate
 	 */
-	@XmlElement(name = "EndDate")
 	public String getEndDate() {
 		return endDate;
 	}
@@ -229,7 +313,6 @@ public class Item {
 	/**
 	 * @return the tripId
 	 */
-	@XmlElement(name = "TripId")
 	public String getTripId() {
 		return tripId;
 	}
@@ -244,7 +327,6 @@ public class Item {
 	/**
 	 * @return the transactionId
 	 */
-	@XmlElement(name = "TransactionId")
 	public String getTransactionId() {
 		return transactionId;
 	}
@@ -259,7 +341,6 @@ public class Item {
 	/**
 	 * @return the reason
 	 */
-	@XmlElement(name = "Reason")
 	public String getReason() {
 		return reason;
 	}
@@ -271,7 +352,6 @@ public class Item {
 		this.reason = reason;
 	}
 
-	@XmlElement(name = "GroupType")
 	public String getGroupType() {
 		return groupType;
 	}
@@ -280,7 +360,6 @@ public class Item {
 		this.groupType = groupType;
 	}
 
-	@XmlElement(name = "Rate")
 	public String getRate() {
 		return rate;
 	}
@@ -289,7 +368,6 @@ public class Item {
 		this.rate = rate;
 	}
 
-	@XmlElement(name = "Surcharges")
 	public String getSurcharges() {
 		return surcharges;
 	}
@@ -298,7 +376,6 @@ public class Item {
 		this.surcharges = surcharges;
 	}
 
-	@XmlElement(name = "Items")
 	public String getItems() {
 		return items;
 	}
@@ -307,7 +384,6 @@ public class Item {
 		this.items = items;
 	}
 
-	@XmlElement(name = "Media")
 	public String getMedia() {
 		return media;
 	}
@@ -316,7 +392,6 @@ public class Item {
 		this.media = media;
 	}
 
-	@XmlElement(name = "Code")
 	public String getCode() {
 		return code;
 	}
@@ -325,7 +400,6 @@ public class Item {
 		this.code = code;
 	}
 
-	@XmlElement(name = "Name")
 	public String getName() {
 		return name;
 	}
@@ -334,7 +408,6 @@ public class Item {
 		this.name = name;
 	}
 
-	@XmlElement(name = "Sort")
 	public String getSort() {
 		return sort;
 	}
@@ -343,7 +416,6 @@ public class Item {
 		this.sort = sort;
 	}
 
-	@XmlElement(name = "AvailItems")
 	public String getAvailItems() {
 		return availItems;
 	}
@@ -352,7 +424,6 @@ public class Item {
 		this.availItems = availItems;
 	}
 
-	@XmlElement(name = "ItemTypeCode")
 	public String getItemTypeCode() {
 		return itemTypeCode;
 	}
@@ -361,7 +432,6 @@ public class Item {
 		this.itemTypeCode = itemTypeCode;
 	}
 
-	@XmlElement(name = "ItemTypeName")
 	public String getItemTypeName() {
 		return itemTypeName;
 	}
@@ -370,7 +440,6 @@ public class Item {
 		this.itemTypeName = itemTypeName;
 	}
 
-	@XmlElement(name = "DeliveryType")
 	public String getDeliveryType() {
 		return deliveryType;
 	}
@@ -379,7 +448,6 @@ public class Item {
 		this.deliveryType = deliveryType;
 	}
 
-	@XmlElement(name = "GroupCode")
 	public String getGroupCode() {
 		return groupCode;
 	}
@@ -388,7 +456,6 @@ public class Item {
 		this.groupCode = groupCode;
 	}
 
-	@XmlElement(name = "GroupName")
 	public String getGroupName() {
 		return groupName;
 	}
@@ -397,7 +464,6 @@ public class Item {
 		this.groupName = groupName;
 	}
 
-	@XmlElement(name = "BandCode")
 	public String getBandCode() {
 		return bandCode;
 	}
@@ -406,7 +472,6 @@ public class Item {
 		this.bandCode = bandCode;
 	}
 
-	@XmlElement(name = "BandName")
 	public String getBandName() {
 		return bandName;
 	}
@@ -442,5 +507,118 @@ public class Item {
 	public void setDuration(String duration) {
 		this.duration = duration;
 	}
+
+	public int getEvents() {
+		return events;
+	}
+
+	public void setEvents(int events) {
+		this.events = events;
+	}
+
+	public int getLocations() {
+		return locations;
+	}
+
+	public void setLocations(int locations) {
+		this.locations = locations;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	public List<Rate> getRateList() {
+		return rateList;
+	}
+
+	public void setRateList(List<Rate> rateList) {
+		this.rateList = rateList;
+	}
+
+	public List<Page> getPageList() {
+		return pageList;
+	}
+
+	public void setPageList(List<Page> pageList) {
+		this.pageList = pageList;
+	}
+
+	public List<FlexItem> getFlexItemList() {
+		return flexItemList;
+	}
+
+	public void setFlexItemList(List<FlexItem> flexItemList) {
+		this.flexItemList = flexItemList;
+	}
+
+	public List<BegLocation> getBegLocationList() {
+		return begLocationList;
+	}
+
+	public void setBegLocationList(List<BegLocation> begLocationList) {
+		this.begLocationList = begLocationList;
+	}
+
+	public String getFlex01() {
+		return flex01;
+	}
+
+	public void setFlex01(String flex01) {
+		this.flex01 = flex01;
+	}
+
+	public String getFlex02() {
+		return flex02;
+	}
+
+	public void setFlex02(String flex02) {
+		this.flex02 = flex02;
+	}
+
+	public String getFlex03() {
+		return flex03;
+	}
+
+	public void setFlex03(String flex03) {
+		this.flex03 = flex03;
+	}
+
+	public String getFlex04() {
+		return flex04;
+	}
+
+	public void setFlex04(String flex04) {
+		this.flex04 = flex04;
+	}
+
+	public String getPortName() {
+		return portName;
+	}
+
+	public void setPortName(String portName) {
+		this.portName = portName;
+	}
+
+	public String getPortRegion() {
+		return portRegion;
+	}
+
+	public void setPortRegion(String portRegion) {
+		this.portRegion = portRegion;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
 
 }

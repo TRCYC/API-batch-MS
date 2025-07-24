@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
+import com.rcyc.batchsystem.service.JobExecutionService;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +29,7 @@ public class BatchController {
     private JobLauncher jobLauncher;
     @Autowired
     private AuditService auditService;
-   
+
     @Autowired
     private Job regionJob;
     @Autowired
@@ -42,7 +43,9 @@ public class BatchController {
     @Autowired
     private Job voyageJob;
     @Autowired
-    private Job transferJob;
+    private Job transferJob; 
+    @Autowired
+    private JobExecutionService jobExecutionService;
 
     @GetMapping("/region")
     public String getMethodName() {
@@ -50,7 +53,7 @@ public class BatchController {
         return new String("Region");
     }
 
-     @GetMapping("/run-region-job/{jobId}")
+    @GetMapping("/run-region-job/{jobId}")
     public String runRegionJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("jobId", jobId)
@@ -103,36 +106,44 @@ public class BatchController {
         jobLauncher.run(voyageJob, params);
         return "Voyage job triggered!";
     }
-    
-    /*@GetMapping("/run-transfer-job")
-    public String transferJob() throws Exception {
-    	Long t1 = System.currentTimeMillis();
-        JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-        jobLauncher.run(transferJob, params);
-        Long t2 = System.currentTimeMillis();
-        System.out.println("Duration--" + (t2-t1));
-        return "Transfer job triggered!";
-    }*/
+
+    /*
+     * @GetMapping("/run-transfer-job")
+     * public String transferJob() throws Exception {
+     * Long t1 = System.currentTimeMillis();
+     * JobParameters params = new JobParametersBuilder()
+     * .addLong("time", System.currentTimeMillis())
+     * .toJobParameters();
+     * jobLauncher.run(transferJob, params);
+     * Long t2 = System.currentTimeMillis();
+     * System.out.println("Duration--" + (t2-t1));
+     * return "Transfer job triggered!";
+     * }
+     */
 
     @GetMapping("/run-transfer-job/{jobId}")
     public String transferJob(@PathVariable Long jobId) throws Exception {
-    	Long t1 = System.currentTimeMillis();
+        Long t1 = System.currentTimeMillis();
         JobParameters params = new JobParametersBuilder()
                 .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(transferJob, params);
         Long t2 = System.currentTimeMillis();
-        System.out.println("Duration--" + (t2-t1));
+        System.out.println("Duration--" + (t2 - t1));
         return "Transfer job triggered!";
     }
-    
+
+    @GetMapping("/run-excursion-voyage-job/{jobId}")
+    public String excursionVoyageJob(@PathVariable Long jobId) throws Exception {
+         jobExecutionService.runExcursionVoyage(jobId);
+        return "Excursion Voyage job triggered!";
+    }
+
     @GetMapping("/test")
     public String testMethod() {
-        auditService.logAudit(999999l,"TEST_PROCESS_NAME",LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Test Description");
+        auditService.logAudit(999999l, "TEST_PROCESS_NAME", LocalDateTime.now(), LocalDateTime.now(),
+                LocalDateTime.now(), "Test Description");
         return new String("Region");
     }
 
-  
 }
