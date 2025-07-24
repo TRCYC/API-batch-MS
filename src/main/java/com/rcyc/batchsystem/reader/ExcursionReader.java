@@ -90,7 +90,6 @@ public class ExcursionReader implements ItemReader<DefaultPayLoad<ExcursionVoyag
                 int i= 0;
                 voyagesEvent.getEventList().parallelStream()
                 .filter(eventDetail -> dateRangeEntity.isBegDateOnOrAfterStartAt(eventDetail.getBegDate()))
-                .limit(3) // keep the original limit of 3 voyages
                 .forEach(eventDetail -> {
                     voyageList.add(eventDetail); // thread-safe list
 
