@@ -123,13 +123,10 @@ public class BatchController {
 
     @GetMapping("/run-transfer-job/{jobId}")
     public String transferJob(@PathVariable Long jobId) throws Exception {
-        Long t1 = System.currentTimeMillis();
         JobParameters params = new JobParametersBuilder()
                 .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(transferJob, params);
-        Long t2 = System.currentTimeMillis();
-        System.out.println("Duration--" + (t2 - t1));
         return "Transfer job triggered!";
     }
 

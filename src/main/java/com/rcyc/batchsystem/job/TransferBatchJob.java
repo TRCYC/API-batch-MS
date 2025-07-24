@@ -28,49 +28,47 @@ import com.rcyc.batchsystem.writer.TransferWriter;
 @Configuration
 public class TransferBatchJob {
 
-	//@Autowired
-	//private TransferReader transferReader;
-	//@Autowired
-	//private TransferProcess transferProcess;
-	//@Autowired
-	//private TransferWriter transferWriter;
+	// @Autowired
+	// private TransferReader transferReader;
+	// @Autowired
+	// private TransferProcess transferProcess;
+	// @Autowired
+	// private TransferWriter transferWriter;
 	@Autowired
-    private RescoClient rescoClient;
+	private RescoClient rescoClient;
 	@Autowired
-    private ElasticService elasticService;
-    @Autowired
-    private AuditService auditService;
-    @Autowired
-    private ScheduledJobService scheduledJobService;
-    @Autowired
-    private JobStepCallbackListener jobStepCallbackListener;
- 
-    
-    @Bean
-    public Step transferStep(StepBuilderFactory stepBuilderFactory,
-    		ItemReader<DefaultPayLoad<Transfer, Object, Transfer>> transferReader,
-    		ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferProcessor,
-            ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> transferWriter) {
-        return stepBuilderFactory.get("transferStep")
-                .<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>>chunk(10)
-                .reader(transferReader)
-                .processor(transferProcessor)
-                .writer(transferWriter)
-                .listener(jobStepCallbackListener)
-                .build();
-    }
+	private ElasticService elasticService;
+	@Autowired
+	private AuditService auditService;
+	@Autowired
+	private ScheduledJobService scheduledJobService;
+	@Autowired
+	private JobStepCallbackListener jobStepCallbackListener;
 
 	@Bean
-	@StepScope
-	public ItemReader<DefaultPayLoad<Transfer, Object, Transfer>> transferReader(@Value("#{jobParameters['jobId']}") Long jobId) {
-		System.out.println("Transfer Reader");
-		return new TransferReader(rescoClient, jobId, auditService, scheduledJobService);
-		//return transferReader;
+	public Step transferStep(StepBuilderFactory stepBuilderFactory,
+			ItemReader<DefaultPayLoad<Transfer, Object, Transfer>> transferReader,
+			ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferProcessor,
+			ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> transferWriter) {
+		return stepBuilderFactory.get("transferStep")
+				.<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>>chunk(10)
+				.reader(transferReader).processor(transferProcessor).writer(transferWriter)
+				.listener(jobStepCallbackListener).build();
 	}
 
 	@Bean
 	@StepScope
-	public ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferProcessor(@Value("#{jobParameters['jobId']}") Long jobId) {
+	public ItemReader<DefaultPayLoad<Transfer, Object, Transfer>> transferReader(
+			@Value("#{jobParameters['jobId']}") Long jobId) {
+		System.out.println("Transfer Reader");
+		return new TransferReader(rescoClient, jobId, auditService, scheduledJobService);
+		// return transferReader;
+	}
+
+	@Bean
+	@StepScope
+	public ItemProcessor<DefaultPayLoad<Transfer, Object, Transfer>, DefaultPayLoad<Transfer, Object, Transfer>> transferProcessor(
+			@Value("#{jobParameters['jobId']}") Long jobId) {
 		System.out.println("Transfer processor");
 		TransferProcess transferProcess = new TransferProcess(jobId, auditService);
 		return transferProcess.transferProcessForWrite();
@@ -78,9 +76,10 @@ public class TransferBatchJob {
 
 	@Bean
 	@StepScope
-	public ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> transferWriter(@Value("#{jobParameters['jobId']}") Long jobId) {
+	public ItemWriter<DefaultPayLoad<Transfer, Object, Transfer>> transferWriter(
+			@Value("#{jobParameters['jobId']}") Long jobId) {
 		System.out.println("Transfer writer");
-		return new TransferWriter(jobId,elasticService,auditService);
-		//return transferWriter;
+		return new TransferWriter(jobId, elasticService, auditService);
+		// return transferWriter;
 	}
 }

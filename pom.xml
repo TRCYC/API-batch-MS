@@ -86,9 +86,21 @@
 		</dependency>
 
 		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
 		</dependency>
 
 		<!-- Activation API (needed for JAXB) -->
@@ -141,11 +153,11 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
 					<execution>
-					  <goals>
-						<goal>repackage</goal>
-					  </goals>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
 					</execution>
-				  </executions>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
