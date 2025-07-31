@@ -14,10 +14,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.logging.Logger;
 
 @Component
 public class ExternalApiClient {
-
+    private Logger logger = Logger.getLogger(ExternalApiClient.class.getName());
     private final HttpClient httpClient;
 
     public ExternalApiClient() {
@@ -29,7 +30,7 @@ public class ExternalApiClient {
 
     public void callBack(StatusDto responseDto) {
         try {
-            String response = callExternalApiPost(Constants.SCHEDULER_API+"/updateStatus", responseDto);
+            String response = callExternalApiPost(Constants.SCHEDULER_API_TEMP+"/updateStatus", responseDto);
             System.out.println("Callback response: " + response);
         } catch (Exception e) {
             System.err.println("Callback failed: " + e.getMessage());
@@ -49,6 +50,8 @@ public class ExternalApiClient {
     }
  
     public String callExternalApiPost(String url, StatusDto responseDto) throws IOException, InterruptedException {
+        logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        logger.info(url);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(responseDto);
         HttpRequest request = HttpRequest.newBuilder()
