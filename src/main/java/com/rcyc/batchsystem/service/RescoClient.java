@@ -40,6 +40,8 @@ public class RescoClient {
   private static final Logger logger = LoggerFactory.getLogger(RescoClient.class);
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restCustomTemplate;
 
     public ResListDictionary getAllRegions() {
         Dictionary dictionary = new Dictionary("RGN", 0);
@@ -71,6 +73,7 @@ public class RescoClient {
                 reqListEvent, ResListEvent.class);
         return resListEvent;
     }
+
 
     public ResListEvent getHotels(ReqListEvent reqListEvent) {
         System.out.println("Resco calling For Hotel");
@@ -127,50 +130,64 @@ public class RescoClient {
                 ResListCategory.class);
     }
 
+
+    public ResListCategory getSuiteCategory(String eventId){
+        System.out.println(" Event >>"+eventId);
+        ReqListCategory req = new ReqListCategory();
+
+        Agency agency = new Agency();
+        agency.setAgentId("40622"); // Replace with actual agent id or inject as needed
+
+        Category category = new Category();
+        category.setEventId(eventId);
+
+        req.setUser(getUser());
+        req.setAgency(agency);
+        req.setCategory(category);
+
+        return restTemplate.postForObject(
+                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+                req,
+                ResListCategory.class
+        );
+
+    }
+
     public ResListItem getTransferArr(String[] typeArr, int voyageId, String transferTfResultStatus) {
         ReqListItem reqListItem = new ReqListItem();
         reqListItem.setUser(getUser());
         Agency agency = new Agency();
         agency.setAgentId("40622"); // TRANSFER_AGENT_ID
-        reqListItem.setAgency(agency);
-        reqListItem.setEvent(new Event(String.valueOf(voyageId)));
-        ResListItem response = new ResListItem();
-        List<Item> itemList = new ArrayList<Item>();
-        for (String type : typeArr) {
-            Item item = new Item();
-            item.setGroupType(type);
-            reqListItem.setItem(item);
-            try {
-                // convertToXml(reqListItem);
-                response = restTemplate.postForObject(
-                        "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
-                        reqListItem, ResListItem.class);
+		    reqListItem.setAgency(agency);
+		    reqListItem.setEvent(new Event(String.valueOf(voyageId)));
+		    ResListItem response = new ResListItem();
+		    List<Item> itemList = new ArrayList<Item>();
+		    for(String type: typeArr) {
+			Item item = new Item();
+			item.setGroupType(type);
+			reqListItem.setItem(item);
+			try {
+				// convertToXml(reqListItem);
+				response = restCustomTemplate.postForObject(
+						"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+						reqListItem, ResListItem.class);
 
-                if (response != null) {
-                    if (type.equals("TF"))
-                        transferTfResultStatus = response.getResult().getStatus();
-                    if (response.getItemList() != null && response.getItemList().getItemList() != null) {
-                        System.out.println(
-                                "Transfer size - " + type + " -" + response.getItemList().getItemList().size());
-                        itemList.addAll(response.getItemList().getItemList());
-                    }
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        response.getItemList().setItemList(itemList);
-        /*
-         * if (response.getItemList() != null) {
-         * if (response.getItemList().getItemList() != null)
-         * System.out.println(response.getItemList().getItemList().size());
-         * } else
-         * System.out.println("response getItemList is null");
-         */
-        return response;
-    }
-
+				if (response != null) {
+					if (type.equals("TF"))
+						transferTfResultStatus = response.getResult().getStatus();
+					if (response.getItemList() != null && response.getItemList().getItemList() != null) {
+						itemList.addAll(response.getItemList().getItemList());
+					}
+				}
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+		response.getItemList().setItemList(itemList);
+		return response;
+	}
+  
     private User getUser() {
         return new User("webapiprod1", "theGr8tw1de0pen#305");
     }
@@ -232,6 +249,5 @@ public class RescoClient {
             e.printStackTrace();
         }
         return response;
-
     }
 }

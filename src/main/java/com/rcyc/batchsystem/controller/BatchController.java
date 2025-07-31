@@ -29,7 +29,7 @@ public class BatchController {
     private JobLauncher jobLauncher;
     @Autowired
     private AuditService auditService;
-
+  
     @Autowired
     private Job regionJob;
     @Autowired
@@ -43,9 +43,12 @@ public class BatchController {
     @Autowired
     private Job voyageJob;
     @Autowired
-    private Job transferJob; 
+    private Job transferJob;
+    @Autowired
+    private Job suiteJob;
     @Autowired
     private JobExecutionService jobExecutionService;
+
 
     @GetMapping("/region")
     public String getMethodName() {
@@ -123,13 +126,10 @@ public class BatchController {
 
     @GetMapping("/run-transfer-job/{jobId}")
     public String transferJob(@PathVariable Long jobId) throws Exception {
-        Long t1 = System.currentTimeMillis();
         JobParameters params = new JobParametersBuilder()
                 .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(transferJob, params);
-        Long t2 = System.currentTimeMillis();
-        System.out.println("Duration--" + (t2 - t1));
         return "Transfer job triggered!";
     }
 
@@ -144,6 +144,16 @@ public class BatchController {
         auditService.logAudit(999999l, "TEST_PROCESS_NAME", LocalDateTime.now(), LocalDateTime.now(),
                 LocalDateTime.now(), "Test Description");
         return new String("Region");
+    }
+
+
+    @GetMapping("/run-suite-job/{jobId}")
+    public String suiteJob(@PathVariable Long jobId) throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("jobId", jobId)
+                .toJobParameters();
+        jobLauncher.run(suiteJob, params);
+        return "Suite job triggered!";
     }
 
 }

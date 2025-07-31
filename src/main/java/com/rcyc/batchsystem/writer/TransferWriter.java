@@ -16,13 +16,13 @@ public class TransferWriter implements ItemWriter<DefaultPayLoad<Transfer, Objec
 	@Autowired
 	private ElasticService elasticService;
 	private Long jobId;
-    private AuditService auditService;
-    
-    public TransferWriter(Long jobId, ElasticService elasticService, AuditService auditService) {
-        this.jobId = jobId;
-        this.elasticService = elasticService;
-        this.auditService = auditService;
-    }
+	private AuditService auditService;
+
+	public TransferWriter(Long jobId, ElasticService elasticService, AuditService auditService) {
+		this.jobId = jobId;
+		this.elasticService = elasticService;
+		this.auditService = auditService;
+	}
 
 	@Override
 	public void write(List<? extends DefaultPayLoad<Transfer, Object, Transfer>> items) throws Exception {

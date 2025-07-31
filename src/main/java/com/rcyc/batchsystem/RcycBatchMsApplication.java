@@ -11,6 +11,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class RcycBatchMsApplication {
 
 	public static void main(String[] args) {
+
+		//System.setProperty("javax.xml.bind.context.factory", "org.glassfish.jaxb.runtime.v2.ContextFactory");
+
 		SpringApplication.run(RcycBatchMsApplication.class, args);
 	}
 
