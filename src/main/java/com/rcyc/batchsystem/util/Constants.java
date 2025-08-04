@@ -1,11 +1,33 @@
 package com.rcyc.batchsystem.util;
 
 public class Constants {
+
     public static final String ENCRYPTION_KEY = System.getenv("RCYC_KEY_VALUE");
     public static final String SCHEDULER_API = System.getenv("SCHDEULER_API");
     public static final String REGION = "Region";
+    public static final String REGION_INDEX = "region";
     public static final String REGION_DEMO = "region_demo";
     public static final String SUCCESS = "Success";
+    public static final String CMS_BASE_URL="https://qm1gatewayapi.ritzcarltonyachtcollection.com/cms-content/"; //System.getenv("CMS_BASE_URL");
 
-    public static final String SCHEDULER_API_TEMP = "https://dev3gatewayapi.ritzcarltonyachtcollection.com/rcyc-scheduler";
+    //public static final String SCHEDULER_API_TEMP = "https://dev3gatewayapi.ritzcarltonyachtcollection.com/rcyc-scheduler";
+    public static final String SCHEDULER_API_TEMP = "http://localhost:8090";
+
+    public static final int DELAY_IN_MINUTES =1;
+
+
+    public static boolean evaluateExpression(String expression) {
+        // Very basic evaluator supporting '>' only
+        if (expression.contains(">")) {
+            String[] parts = expression.split(">");
+            try {
+                double left = Double.parseDouble(parts[0].trim());
+                double right = Double.parseDouble(parts[1].trim());
+                return left > right;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 }

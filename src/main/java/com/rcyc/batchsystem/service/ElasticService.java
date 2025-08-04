@@ -1,18 +1,27 @@
 package com.rcyc.batchsystem.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import com.rcyc.batchsystem.model.elastic.*;
+import com.rcyc.batchsystem.util.Constants;
+
 import org.springframework.stereotype.Service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.ReindexRequest;
+import co.elastic.clients.elasticsearch.core.ReindexResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.CountResponse;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
+import co.elastic.clients.elasticsearch.core.DeleteResponse;
 
 @Service
 public class ElasticService {
@@ -23,22 +32,6 @@ public class ElasticService {
     public ElasticService(ElasticsearchClient client, RescoClient rescoClient) {
         this.client = client;
         this.rescoClient = rescoClient;
-    }
-
-    public void getRegionData() {
-        try {
-            SearchResponse<Object> response = client.search(s -> s
-                    .index("region")
-                    .query(q -> q
-                            .matchAll(m -> m)),
-                    Object.class);
-
-            response.hits().hits().forEach(hit -> {
-                System.out.println("Found: " + hit.source());
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void saveRegionData(Region region) {
@@ -75,31 +68,29 @@ public class ElasticService {
             System.out.println("Bulk insert successful");
         }
     }
-    
-	public void bulkInsertTransfers(List<Transfer> transfers, String indexName) throws IOException {
-		BulkRequest.Builder br = new BulkRequest.Builder();
 
-		for (Transfer transfer : transfers) {
-			br.operations(op -> op.index(idx -> idx.index(indexName)
-					.id(String.valueOf(transfer.getRescoItemID()) + String.valueOf(transfer.getVoyageId())) // optional,
-																											// can be
-																											// auto-generated
-					.document(transfer)));
-		}
+    public void bulkInsertTransfers(List<Transfer> transfers, String indexName) throws IOException {
+        BulkRequest.Builder br = new BulkRequest.Builder();
 
-		BulkResponse result = client.bulk(br.build());
+        for (Transfer transfer : transfers) {
+            br.operations(op -> op.index(idx -> idx.index(indexName)
+                    .id(String.valueOf(transfer.getRescoItemID()) + String.valueOf(transfer.getVoyageId()))
+                    .document(transfer)));
+        }
 
-		if (result.errors()) {
-			System.out.println("Bulk had errors");
-			result.items().forEach(item -> {
-				if (item.error() != null) {
-					System.out.println(item.error().reason());
-				}
-			});
-		} else {
-			System.out.println("Bulk insert successful");
-		}
-	}
+        BulkResponse result = client.bulk(br.build());
+
+        if (result.errors()) {
+            System.out.println("Bulk had errors");
+            result.items().forEach(item -> {
+                if (item.error() != null) {
+                    System.out.println(item.error().reason());
+                }
+            });
+        } else {
+            System.out.println("Bulk insert successful");
+        }
+    }
 
     public void bulkInsertSuite(List<Suite> suites, String indexName) throws IOException {
         BulkRequest.Builder br = new BulkRequest.Builder();
@@ -109,9 +100,7 @@ public class ElasticService {
                     .index(idx -> idx
                             .index(indexName)
                             .id(suite.getVoyageId() != null ? suite.getVoyageId().toString() : null)
-                            .document(suite)
-                    )
-            );
+                            .document(suite)));
         }
 
         BulkResponse result = client.bulk(br.build());
@@ -182,7 +171,8 @@ public class ElasticService {
         // bulkInsert(voyages, indexName, v -> String.valueOf(v.getEventId()));
     }
 
-      public void bulkInsertExcursionVoyages(List<com.rcyc.batchsystem.model.elastic.ExcursionVoyage> excursionVoyages, String indexName)
+    public void bulkInsertExcursionVoyages(List<com.rcyc.batchsystem.model.elastic.ExcursionVoyage> excursionVoyages,
+            String indexName)
             throws IOException {
         bulkInsert(excursionVoyages, indexName, v -> String.valueOf(v.getId()));
     }
@@ -195,5 +185,72 @@ public class ElasticService {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    private <T> List<T> getAllDocuments(String indexName, Class<T> clazz) throws IOException {
+        List<T> results = new ArrayList<>();
+
+        SearchRequest searchRequest = new SearchRequest.Builder()
+                .index(indexName)
+                .query(q -> q.matchAll(m -> m)) // match_all query
+                .size(1000) // adjust page size as needed
+                .build();
+
+        SearchResponse<T> response = client.search(searchRequest, clazz);
+
+        for (Hit<T> hit : response.hits().hits()) {
+            results.add(hit.source());
+        }
+
+        return results;
+    }
+
+    public List<Region> getRegionData() {
+        List<Region> results = new ArrayList<>();
+        try {
+            results = getAllDocuments(Constants.REGION_INDEX, Region.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+    public List<Region> getTempRegionData() {
+        List<Region> results = new ArrayList<>();
+        try {
+            results = getAllDocuments(Constants.REGION_DEMO, Region.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+    private void deleteById(String indexName, String id) throws IOException {
+        DeleteRequest deleteRequest = new DeleteRequest.Builder()
+                .index(indexName)
+                .id(id)
+                .build();
+
+        DeleteResponse deleteResponse = client.delete(deleteRequest);
+        System.out.println("Deleted: " + deleteResponse.result());
+    }
+
+    public void deleteRegionDocument(String id) {
+        try {
+            deleteById(Constants.REGION_DEMO, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void reindexDemoToLive(String sourceIndex,String destinationIndex) throws IOException {
+        ReindexRequest reindexRequest = new ReindexRequest.Builder()
+                .source(s -> s.index(sourceIndex))
+                .dest(d -> d.index(destinationIndex))
+                .build();
+
+        ReindexResponse response = client.reindex(reindexRequest);
+        System.out.println("Reindexed docs: " + response.created());
     }
 }

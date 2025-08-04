@@ -25,6 +25,8 @@ public class JobStepCallbackListener implements StepExecutionListener {
     private ElasticService elasticService;
     @Autowired
     private AuditService auditService;
+    @Autowired
+    private JobSwitchProcessor jobSwitchProcessor;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -43,8 +45,10 @@ public class JobStepCallbackListener implements StepExecutionListener {
                 if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.REGION)) {
                     responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.REGION_DEMO)));
                     responseDto.setStatus(Constants.SUCCESS);
+                    jobSwitchProcessor.doJobSwitch(schedulerName, jobId);
                 }
-                externalApiClient.callBack(responseDto);
+                //externalApiClient.callBack(responseDto);
+                // JobSwitchProcessor
                 System.out.println(" External API callback sent successfully");
             }else
               auditService.logAudit(jobId,"anonymous"," No scheduler is related for the job :"+jobId);

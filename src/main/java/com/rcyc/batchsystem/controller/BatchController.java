@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rcyc.batchsystem.service.AuditService;
+import com.rcyc.batchsystem.service.DelayedJobScheduler;
 import com.rcyc.batchsystem.service.ElasticService;
 import com.rcyc.batchsystem.service.JobExecutionService;
+import com.rcyc.batchsystem.util.Constants;
 
 import java.time.LocalDateTime;
 
@@ -29,7 +31,8 @@ public class BatchController {
     private JobLauncher jobLauncher;
     @Autowired
     private AuditService auditService;
-  
+    @Autowired
+    private  DelayedJobScheduler delayedJobScheduler;
     @Autowired
     private Job regionJob;
     @Autowired
@@ -61,8 +64,9 @@ public class BatchController {
         JobParameters params = new JobParametersBuilder()
                 .addLong("jobId", jobId)
                 .toJobParameters();
-        jobLauncher.run(regionJob, params);
-        return "Region job triggered!";
+
+        delayedJobScheduler.scheduleJob(regionJob, params, Constants.DELAY_IN_MINUTES);
+        return "Region job scheduled to run in " +  Constants.DELAY_IN_MINUTES + " minute(s)";
     }
 
     @GetMapping("/run-port-job")
