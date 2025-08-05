@@ -235,16 +235,16 @@ public class ElasticService {
         System.out.println("Deleted: " + deleteResponse.result());
     }
 
-    public void deleteRegionDocument(String id) {
+    public void deleteDocument(String index,String id) {
         try {
-            deleteById(Constants.REGION_DEMO, id);
+            deleteById(index, id);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void reindexDemoToLive(String sourceIndex,String destinationIndex) throws IOException {
+    public void reindexDemoToLive(String sourceIndex, String destinationIndex) throws IOException {
         ReindexRequest reindexRequest = new ReindexRequest.Builder()
                 .source(s -> s.index(sourceIndex))
                 .dest(d -> d.index(destinationIndex))
@@ -253,4 +253,17 @@ public class ElasticService {
         ReindexResponse response = client.reindex(reindexRequest);
         System.out.println("Reindexed docs: " + response.created());
     }
+
+    public List<Port> getPortData(String index) {
+        List<Port> results = new ArrayList<>();
+        try {
+            results = getAllDocuments(index, Port.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+     
+
 }

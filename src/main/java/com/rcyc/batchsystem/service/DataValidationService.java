@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -23,6 +24,7 @@ import com.rcyc.batchsystem.entity.RcycDataVariationAction;
 import com.rcyc.batchsystem.entity.RcycDataVariationConfig;
 import com.rcyc.batchsystem.entity.RcycSchedulerHistory;
 import com.rcyc.batchsystem.entity.RcycSchedulerQueue;
+import com.rcyc.batchsystem.model.elastic.Port;
 import com.rcyc.batchsystem.model.elastic.Region;
 import com.rcyc.batchsystem.repository.RcycCmsCheckRepository;
 import com.rcyc.batchsystem.repository.RcycDataVariationActionRepository;
@@ -33,6 +35,8 @@ import com.rcyc.batchsystem.util.Constants;
 
 @Service
 public class DataValidationService {
+
+    Logger log = Logger.getLogger(DataValidationService.class.getName());
 
     @Autowired
     private RcycCmsCheckRepository rcycCmsCheckRepository;
@@ -51,6 +55,7 @@ public class DataValidationService {
     String cmsBaseURL = Constants.CMS_BASE_URL;
     HashMap<String, String> regionCodes = new HashMap<>();
     HashMap<String, String> mailContentForvalidation = new HashMap<>();
+    HashMap<String, String> portCodes = new HashMap<>();
     // private @Autowired
     // private RestTemplate restTemplate;
 
@@ -143,6 +148,56 @@ public class DataValidationService {
         return true;
     }
 
+
+//     public void portValidateCMS(List<Port> tempFilteredPortList) {
+//         try {
+//             boolean result = true;
+//             String bodyHeader = null;
+//             mailContentForvalidation.clear();
+//             List<RcycCmsCheck> criteriaCheck = rcycCmsCheckRepository.findByJobTypeAndDisableAndIsTaxonomy(
+//                     Constants.PORT, 0,
+//                     1);
+//             List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+//             messageConverters.add(new GsonHttpMessageConverter());
+//             RestTemplate restTemplate = new RestTemplate(messageConverters);
+//              if (criteriaCheck == null || criteriaCheck.size() == 0) {
+//             result = false;
+//         } else {
+//             for (Port tempPort : tempFilteredPortList) {
+//                 String url = null;
+
+//                 if (tempPort.getPortCode() == null || tempPort.getPortCode().length() <= 3) {
+// 					elasticService.deleteDocument(Constants.PORT_DEMO_INDEX,tempPort.getPortCode());
+// 				}
+//                 RcycCmsCheck taxonomyCriterion = criteriaCheck.get(0);
+//                 url = cmsBaseURL
+// 						+ taxonomyCriterion.getContentUrl().replaceAll(":portcode", tempPort.getPortCode());
+//                 JsonObject[] cmsValidateMapList = restTemplate.getForObject(url, JsonObject[].class);
+//                 if (cmsValidateMapList == null || cmsValidateMapList.length == 0) {
+// 					log.info("CMS Taxonomy Content Not Found For Port Code:" + tempPort.getPortCode());
+// 					result = false;
+// //					mailSmtp.SendMailSmtp(
+// //							"CMS Taxonomy Content Not Found For Port Code:" + tempPort.getPortCode()
+// //							+ "\n request url:" + url,
+// //							"CMS Taxonomy Content Not Found For Port Code:" + tempPort.getPortCode(),true);
+// 					portCodes.put(tempPort.getPortCode(), taxonomyCriterion.getContentName());
+// 					String values = retrieveValuesFromListMethod(portCodes, taxonomyCriterion.getContentName());
+// 					bodyHeader = "<Strong>CMS " + taxonomyCriterion.getContentName()
+// 							+ " Not Found For Port Code</Strong>";
+// 					mailContentForvalidation.put(bodyHeader, bodyHeader + " : " + values + "<br>");
+// 				}else{
+                
+//                 }
+
+//             }
+//         }
+
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//         }
+//     }
+
+
     private String retrieveValuesFromListMethod(HashMap map, String content) {
         Set keys = map.keySet();
         Iterator itr = keys.iterator();
@@ -163,7 +218,7 @@ public class DataValidationService {
     public boolean checkRegionDataVariation(List<Region> tempRegionList) {
         if (!tempRegionList.isEmpty()) {
             List<Region> regions = elasticService.getRegionData();
-            System.out.println("Temp" + tempRegionList.size()+", Live"+regions.size());
+            System.out.println("Temp" + tempRegionList.size() + ", Live" + regions.size());
             List<RcycDataVariationConfig> rcycVariationCriterias = rcycDataVariationConfigRepository
                     .findByJobTypeAndDisableFalse(Constants.REGION);
             List<RcycDataVariationAction> rcycDataVariationActionList = rcycDataVariationActionRepository
@@ -172,6 +227,25 @@ public class DataValidationService {
                 String expression = rcycDataVariationActionList.get(0).getActionCondition();
                 expression = expression.replace("${result}",
                         String.valueOf(Math.abs(tempRegionList.size() - regions.size())));
+                return Constants.evaluateExpression(expression);
+            }
+        }
+
+        return false;
+    }
+
+    public boolean portDataVariation(List<Port> tempPortList) {
+        if (!tempPortList.isEmpty()) {
+            List<Port> realData = elasticService.getPortData(Constants.PORT_INDEX);
+            System.out.println("Temp" + tempPortList.size() + ", Live" + realData.size());
+            List<RcycDataVariationConfig> rcycVariationCriterias = rcycDataVariationConfigRepository
+                    .findByJobTypeAndDisableFalse(Constants.PORT);
+            List<RcycDataVariationAction> rcycDataVariationActionList = rcycDataVariationActionRepository
+                    .findByIdVariation(rcycVariationCriterias.get(0).getIdVariation());
+            if (!rcycDataVariationActionList.isEmpty()) {
+                String expression = rcycDataVariationActionList.get(0).getActionCondition();
+                expression = expression.replace("${result}",
+                        String.valueOf(Math.abs(tempPortList.size() - realData.size())));
                 return Constants.evaluateExpression(expression);
             }
         }
@@ -188,5 +262,7 @@ public class DataValidationService {
         rcycSchedulerQueueRepository.delete(schedulerQueue);
 
     }
+
+    
 
 }

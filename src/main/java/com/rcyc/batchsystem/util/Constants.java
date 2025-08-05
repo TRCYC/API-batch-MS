@@ -7,6 +7,11 @@ public class Constants {
     public static final String REGION = "Region";
     public static final String REGION_INDEX = "region";
     public static final String REGION_DEMO = "region_demo";
+
+    public static final String PORT = "Port";
+    public static final String PORT_INDEX = "port";
+    public static final String PORT_DEMO_INDEX = "port_demo";
+
     public static final String SUCCESS = "Success";
     public static final String CMS_BASE_URL="https://qm1gatewayapi.ritzcarltonyachtcollection.com/cms-content/"; //System.getenv("CMS_BASE_URL");
 

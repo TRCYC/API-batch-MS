@@ -15,6 +15,7 @@ public class ResListLocation {
     private Result result;
 
     public ResListLocation() {
+        locationList = new LocationList();
     }
 
     public ResListLocation(LocationList locationList, Result result) {
@@ -29,5 +30,12 @@ public class ResListLocation {
     public Result getResult() {
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ResListLocation [locationList=" + locationList + ", result=" + result + "]";
+    }
+
+    
 }
   

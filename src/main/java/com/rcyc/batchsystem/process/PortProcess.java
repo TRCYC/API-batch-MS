@@ -14,12 +14,24 @@ import com.rcyc.batchsystem.model.elastic.Port;
 import com.rcyc.batchsystem.model.resco.Location;
 import com.rcyc.batchsystem.model.resco.LocationList;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
+import com.rcyc.batchsystem.service.AuditService;
 
-@Component
+ 
 public class PortProcess {
+
+     private Long jobId;
+    private AuditService auditService;
+
+    public PortProcess(Long jobId,AuditService auditService){
+        this.jobId = jobId;
+        this.auditService = auditService;
+    }
+
+
     public ItemProcessor<DefaultPayLoad<Port, Object, Port>, DefaultPayLoad<Port, Object, Port>> portProcessForWrite() {
         return item -> {
             if (item != null && item.getReader() != null) {
+                auditService.logAudit(jobId, "feed_type", "Processing");
                 ResListLocation listCategory = (ResListLocation) item.getReader();
                 LocationList locationList = listCategory.getLocationList();
                 List<Port> processedList = null;

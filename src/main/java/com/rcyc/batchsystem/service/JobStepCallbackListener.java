@@ -6,6 +6,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.rcyc.batchsystem.entity.ScheduledJob;
@@ -26,7 +27,16 @@ public class JobStepCallbackListener implements StepExecutionListener {
     @Autowired
     private AuditService auditService;
     @Autowired
-    private JobSwitchProcessor jobSwitchProcessor;
+    private RegionSwitchProcessor jobSwitchProcessor;
+
+    @Autowired
+    @Qualifier("regionSwitch")
+    private JobSwitchService regionSwitch;
+
+    @Autowired
+    @Qualifier("portSwitch")
+    private JobSwitchService portSwitch;
+
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -42,13 +52,26 @@ public class JobStepCallbackListener implements StepExecutionListener {
             if (schedulerName != null) {
                 responseDto.setJobId(jobId);
                 responseDto.setProcess(schedulerName);
+                responseDto.setStatus(Constants.SUCCESS);
                 if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.REGION)) {
                     responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.REGION_DEMO)));
-                    responseDto.setStatus(Constants.SUCCESS);
-                    jobSwitchProcessor.doJobSwitch(schedulerName, jobId);
+                    
+                    regionSwitch.doJobSwitch(jobId);
                 }
-                //externalApiClient.callBack(responseDto);
-                // JobSwitchProcessor
+                else if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.PORT)) {
+                    responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.PORT_DEMO_INDEX)));
+                }
+                
+                 externalApiClient.callBack(responseDto);
+                
+                //     if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.PORT)) {
+                //     // responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.REGION_DEMO)));
+                //     // responseDto.setStatus(Constants.SUCCESS);
+                //     portSwitch.doJobSwitch(jobId);
+                // }
+
+              
+                // / JobSwitchProcessor
                 System.out.println(" External API callback sent successfully");
             }else
               auditService.logAudit(jobId,"anonymous"," No scheduler is related for the job :"+jobId);

@@ -69,10 +69,10 @@ public class BatchController {
         return "Region job scheduled to run in " +  Constants.DELAY_IN_MINUTES + " minute(s)";
     }
 
-    @GetMapping("/run-port-job")
-    public String runPortJob() throws Exception {
+    @GetMapping("/run-port-job/{jobId}")
+    public String runPortJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(portJob, params);
         return "Port job triggered!";
