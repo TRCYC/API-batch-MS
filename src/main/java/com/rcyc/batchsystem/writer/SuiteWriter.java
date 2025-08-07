@@ -4,6 +4,9 @@ import com.rcyc.batchsystem.model.elastic.Suite;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
+import com.rcyc.batchsystem.util.Constants;
+
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,14 +30,15 @@ public class SuiteWriter implements ItemWriter<DefaultPayLoad<Suite, Object, Sui
     public void write(List<? extends DefaultPayLoad<Suite, Object, Suite>> items) throws Exception{
         System.out.println("Entering Suite write");
         auditService.logAudit(jobId, "feed_type", "Writing");
-        elasticService.createIndex("suite_demo");
-        elasticService.truncateIndexData("suite_demo");
+        elasticService.createIndex(Constants.SUITE_DEMO_INDEX);
+        elasticService.createIndex(Constants.SUITE_INDEX);
+        elasticService.truncateIndexData(Constants.SUITE_DEMO_INDEX);
 
         for(DefaultPayLoad<Suite, Object, Suite> payLoad : items){
             List<Suite> suites=(List<Suite>) payLoad.getResponse();
             if(suites != null){
                 System.out.println("From suite >>"+suites.size());
-                elasticService.bulkInsertSuite(suites, "suite_demo");
+                elasticService.bulkInsertSuite(suites, Constants.SUITE_DEMO_INDEX);
             }
         }
     }

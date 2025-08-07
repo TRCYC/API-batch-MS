@@ -24,6 +24,9 @@ public class Constants {
     public static final String ITINERARY_INDEX ="itinerary";
     public static final String ITINERARY_DEMO_INDEX ="itinerary_demo";
 
+    public static final String SUITE ="Suite";
+    public static final String SUITE_INDEX ="suite";
+    public static final String SUITE_DEMO_INDEX ="suite_demo";
 
     public static boolean evaluateExpression(String expression) {
         // Very basic evaluator supporting '>' only

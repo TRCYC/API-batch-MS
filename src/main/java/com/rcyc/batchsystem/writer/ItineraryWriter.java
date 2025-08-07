@@ -25,7 +25,7 @@ public class ItineraryWriter implements ItemWriter<DefaultPayLoad<Itinerary, Obj
     @Override
     public void write(List<? extends DefaultPayLoad<Itinerary, Object, Itinerary>> items) throws Exception {
         elasticService.createIndex(Constants.ITINERARY_DEMO_INDEX);
-         elasticService.createIndex(Constants.ITINERARY_INDEX);
+        elasticService.createIndex(Constants.ITINERARY_INDEX);
         elasticService.truncateIndexData(Constants.ITINERARY_DEMO_INDEX);
         for (DefaultPayLoad<Itinerary, Object, Itinerary> payload : items) {
             List<Itinerary> itineraryList = payload.getResponse();
