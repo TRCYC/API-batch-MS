@@ -19,7 +19,7 @@ public class HotelWriter implements ItemWriter<DefaultPayLoad<Hotel, Object, Hot
     @Override
     public void write(List<? extends DefaultPayLoad<Hotel, Object, Hotel>> items) throws Exception {
         System.out.println("Entering Hotel write ");
-        elasticService.createTempIndex("hotel_demo");
+        elasticService.createIndex("hotel_demo");
         elasticService.truncateIndexData("hotel_demo");
         for (DefaultPayLoad<Hotel, Object, Hotel> payload : items) {
             List<Hotel> hotels = (List<Hotel>) payload.getResponse();

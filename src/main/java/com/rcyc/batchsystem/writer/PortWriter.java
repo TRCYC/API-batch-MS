@@ -34,7 +34,7 @@ public class PortWriter implements ItemWriter<DefaultPayLoad<Port, Object, Port>
 
     @Override
     public void write(List<? extends DefaultPayLoad<Port, Object, Port>> items) throws Exception {
-        elasticService.createTempIndex("port_demo");
+        elasticService.createIndex("port_demo");
         elasticService.truncateIndexData("port_demo");
          auditService.logAudit(jobId, "feed_type", "Writing");
         for (DefaultPayLoad<Port, Object, Port> payload : items) {

@@ -20,6 +20,10 @@ public class Constants {
 
     public static final int DELAY_IN_MINUTES =1;
 
+    public static final String ITINERARY ="Itinerary";
+    public static final String ITINERARY_INDEX ="itinerary";
+    public static final String ITINERARY_DEMO_INDEX ="itinerary_demo";
+
 
     public static boolean evaluateExpression(String expression) {
         // Very basic evaluator supporting '>' only

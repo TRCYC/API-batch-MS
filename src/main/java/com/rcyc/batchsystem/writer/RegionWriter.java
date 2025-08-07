@@ -47,7 +47,7 @@ public class RegionWriter implements ItemWriter<RegionPayLoad> {
             List<RegionEntity> regionArrayList = new ArrayList<>();
             regionIteratorList.forEach(regionArrayList::add);
             auditService.logAudit(jobId, "feed_type", "Writing");
-            elasticService.createTempIndex("region_demo");
+            elasticService.createIndex("region_demo");
             elasticService.truncateIndexData("region_demo");
             for (RegionPayLoad payload : items) {
                 processRegionBeforeInsert(payload.getRegionResponse(), regionArrayList);

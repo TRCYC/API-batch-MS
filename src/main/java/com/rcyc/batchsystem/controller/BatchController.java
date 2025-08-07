@@ -78,10 +78,10 @@ public class BatchController {
         return "Port job triggered!";
     }
 
-    @GetMapping("/run-itinerary-job")
-    public String itineraryJob() throws Exception {
+    @GetMapping("/run-itinerary-job/{jobId}")
+    public String itineraryJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(itineraryJob, params);
         return "Itinerary job triggered!";

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
@@ -16,28 +18,44 @@ import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.entity.FeedDateRangeEntity;
 import com.rcyc.batchsystem.model.elastic.Itinerary; 
 import com.rcyc.batchsystem.model.resco.*;
-import com.rcyc.batchsystem.model.resco.Location;
-import com.rcyc.batchsystem.model.resco.ResListEvent;
-import com.rcyc.batchsystem.model.resco.ResListItenarary;
-import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.repository.FeedDateRangeRepository;
+import com.rcyc.batchsystem.service.AuditService;
+import com.rcyc.batchsystem.service.ElasticService;
 import com.rcyc.batchsystem.service.RescoClient;
+import com.rcyc.batchsystem.service.ScheduledJobService;
 
-@Component
+ 
 public class ItinararyReader implements ItemReader<DefaultPayLoad<Itinerary, Object, Itinerary>> {
 
-    @Autowired
+    
+    private static final Logger logger = LoggerFactory.getLogger(ItinararyReader.class);
     private RescoClient rescoClient;
-    @Autowired
+    private AuditService auditService;
+    private ElasticService elasticService;
     private FeedDateRangeRepository feedDateRangeRepository;
+    private ScheduledJobService scheduledJobService;
     private boolean alreadyRead = false;
+    private Long jobId;
+
+    public ItinararyReader(RescoClient rescoClient, AuditService auditService, ElasticService elasticService,
+            FeedDateRangeRepository feedDateRangeRepository,ScheduledJobService scheduledJobService,Long jobId) {
+       this.rescoClient = rescoClient;
+       this.auditService = auditService;
+       this.elasticService = elasticService;
+       this.feedDateRangeRepository =feedDateRangeRepository;
+       this.scheduledJobService = scheduledJobService;
+       this.jobId = jobId;
+    }
 
     @Override
     public DefaultPayLoad<Itinerary, Object, Itinerary> read()
             throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         try {
-            if (alreadyRead)
+            boolean flag = scheduledJobService.isJobAvailableForExecution(jobId, auditService);
+            if (!flag){
+                logger.info("Condition failed, so reader return null, trying to exit from job");
                 return null;
+            }
             DefaultPayLoad<Itinerary, Object, Itinerary> itenararyPayLoad = new DefaultPayLoad<>();
             itenararyPayLoad.setReader(getItenararyFromResco());
             alreadyRead = true;

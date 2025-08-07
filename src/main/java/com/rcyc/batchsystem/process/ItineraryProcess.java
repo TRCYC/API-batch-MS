@@ -13,14 +13,25 @@ import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.elastic.Itinerary;
 import com.rcyc.batchsystem.model.resco.Location;
 import com.rcyc.batchsystem.model.resco.ResListItenarary;
+import com.rcyc.batchsystem.service.AuditService;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.time.temporal.ChronoUnit;
 
 // NOTE: ResListItenarary must have a method: public List<Itinerary> getItineraries()
 // for this processor to work correctly.
-@Component
+
 public class ItineraryProcess {
+
+    private Long jobId;
+    private AuditService auditService;
+
+    public ItineraryProcess(Long jobId,AuditService auditService){
+        this.jobId = jobId;
+        this.auditService = auditService;
+    }
+
     public ItemProcessor<DefaultPayLoad<Itinerary, Object, Itinerary>, DefaultPayLoad<Itinerary, Object, Itinerary>> itineraryProcessForWrite() {
         return item -> {
             if (item != null && item.getReader() != null) {

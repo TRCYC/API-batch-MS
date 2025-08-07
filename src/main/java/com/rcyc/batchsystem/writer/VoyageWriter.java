@@ -17,7 +17,7 @@ public class VoyageWriter implements ItemWriter<DefaultPayLoad<Voyage, Object, V
 
     @Override
     public void write(List<? extends DefaultPayLoad<Voyage, Object, Voyage>> items) throws Exception {
-        elasticService.createTempIndex("voyage_demo");
+        elasticService.createIndex("voyage_demo");
         elasticService.truncateIndexData("voyage_demo");
         System.out.println("Voyage writer");
         for (DefaultPayLoad<Voyage, Object, Voyage> payload : items) {

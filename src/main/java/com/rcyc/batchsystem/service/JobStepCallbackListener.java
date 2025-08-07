@@ -60,6 +60,8 @@ public class JobStepCallbackListener implements StepExecutionListener {
                 }
                 else if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.PORT)) {
                     responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.PORT_DEMO_INDEX)));
+                }else if (schedulerName != null && schedulerName.equalsIgnoreCase(Constants.ITINERARY)) {
+                    responseDto.setCurrentCount(String.valueOf(elasticService.getDocumentCount(Constants.ITINERARY_DEMO_INDEX)));
                 }
                 
                  externalApiClient.callBack(responseDto);

@@ -28,7 +28,7 @@ public class TransferWriter implements ItemWriter<DefaultPayLoad<Transfer, Objec
 	public void write(List<? extends DefaultPayLoad<Transfer, Object, Transfer>> items) throws Exception {
 		System.out.println("Entering Transfer write");
 		auditService.logAudit(jobId, "feed_type", "Writing");
-		elasticService.createTempIndex("transfer_forkjoin_demo");
+		elasticService.createIndex("transfer_forkjoin_demo");
 		elasticService.truncateIndexData("transfer_forkjoin_demo");
 		for (DefaultPayLoad<Transfer, Object, Transfer> payload : items) {
 			List<Transfer> transferList = payload.getResponse();

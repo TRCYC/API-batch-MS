@@ -27,7 +27,7 @@ public class SuiteWriter implements ItemWriter<DefaultPayLoad<Suite, Object, Sui
     public void write(List<? extends DefaultPayLoad<Suite, Object, Suite>> items) throws Exception{
         System.out.println("Entering Suite write");
         auditService.logAudit(jobId, "feed_type", "Writing");
-        elasticService.createTempIndex("suite_demo");
+        elasticService.createIndex("suite_demo");
         elasticService.truncateIndexData("suite_demo");
 
         for(DefaultPayLoad<Suite, Object, Suite> payLoad : items){

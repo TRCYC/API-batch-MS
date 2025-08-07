@@ -117,7 +117,7 @@ public class ElasticService {
         }
     }
 
-    public void createTempIndex(String indexName) throws Exception {
+    public void createIndex(String indexName) throws Exception {
         if (!indexExists(indexName)) {
             createNewIndex(indexName);
         }

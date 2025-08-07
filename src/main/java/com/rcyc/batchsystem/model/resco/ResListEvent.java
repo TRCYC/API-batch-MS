@@ -1,5 +1,6 @@
 package com.rcyc.batchsystem.model.resco;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,7 +18,9 @@ public class ResListEvent {
     @XmlElement(name = "Event")
     private List<EventDetail> eventList;
 
-    public ResListEvent() {}
+    public ResListEvent() {
+        eventList = new ArrayList<>();
+    }
 
     public Result getResult() {
         return result;

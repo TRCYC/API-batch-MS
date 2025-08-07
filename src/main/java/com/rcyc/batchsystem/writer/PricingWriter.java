@@ -17,7 +17,7 @@ public class PricingWriter implements ItemWriter<DefaultPayLoad<Pricing, Object,
 
     @Override
     public void write(List<? extends DefaultPayLoad<Pricing, Object, Pricing>> items) throws Exception {
-        elasticService.createTempIndex("pricing_demo");
+        elasticService.createIndex("pricing_demo");
           elasticService.truncateIndexData("pricing_demo");
           System.out.println("Pricing writer");
         for (DefaultPayLoad<Pricing, Object, Pricing> payload : items) {
