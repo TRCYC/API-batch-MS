@@ -28,6 +28,11 @@ public class Constants {
     public static final String SUITE_INDEX ="suite";
     public static final String SUITE_DEMO_INDEX ="suite_demo";
 
+    
+    public static final String HOTEL ="Hotel";
+    public static final String HOTEL_INDEX ="hotel";
+    public static final String HOTEL_DEMO_INDEX ="hotel_demo";
+
     public static boolean evaluateExpression(String expression) {
         // Very basic evaluator supporting '>' only
         if (expression.contains(">")) {

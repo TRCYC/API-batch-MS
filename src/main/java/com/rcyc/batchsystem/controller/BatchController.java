@@ -87,10 +87,10 @@ public class BatchController {
         return "Itinerary job triggered!";
     }
 
-    @GetMapping("/run-hotel-job")
-    public String hotelJob() throws Exception {
+    @GetMapping("/run-hotel-job/{jobId}")
+    public String hotelJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                 .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(hotelJob, params);
         return "Hotel job triggered!";

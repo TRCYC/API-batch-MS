@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.batch.item.ItemProcessor;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
 import com.rcyc.batchsystem.model.resco.ResListEvent;
+import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.model.resco.EventDetail;
 import com.rcyc.batchsystem.model.elastic.Hotel;
 
@@ -13,8 +14,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+ 
 public class HotelProcessor {
+
+    private AuditService auditService;
+    private Long jobId;
+
+    public HotelProcessor(AuditService auditService,Long jobId){
+        this.auditService = auditService;
+        this.jobId = jobId;
+    }
+
     public ItemProcessor<DefaultPayLoad<Hotel, Object, Hotel>, DefaultPayLoad<Hotel, Object, Hotel>> hotelProcessForWrite() {
         return item -> {
             if (item != null && item.getReader() != null) {
