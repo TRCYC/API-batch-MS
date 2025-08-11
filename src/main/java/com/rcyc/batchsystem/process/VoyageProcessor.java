@@ -16,6 +16,7 @@ import com.rcyc.batchsystem.model.resco.ResListDictionary;
 import com.rcyc.batchsystem.model.resco.ResListEvent;
 import com.rcyc.batchsystem.model.resco.ResListItinerary;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
+import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.util.DateUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.HashSet;
 import java.util.HashMap;
 
-@Component
+
 public class VoyageProcessor {
 
     private ResListLocation pList;
@@ -40,6 +41,13 @@ public class VoyageProcessor {
     private ResListItinerary evrimaItinerary;
     private ResListItinerary luminaraItinerary;
     private Map<String, List<ResListCategory>> allSuites;
+    private AuditService auditService;
+    private Long jobId;
+
+    public VoyageProcessor(AuditService auditService,Long jobId){
+        this.auditService = auditService;
+        this.jobId = jobId;
+    }
 
     public ItemProcessor<DefaultPayLoad<Voyage, Object, Voyage>, DefaultPayLoad<Voyage, Object, Voyage>> voyageProcessForWrite() {
         return item -> {

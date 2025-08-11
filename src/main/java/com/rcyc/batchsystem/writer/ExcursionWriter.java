@@ -17,6 +17,7 @@ import com.rcyc.batchsystem.model.job.RegionPayLoad;
 import com.rcyc.batchsystem.repository.RegionRepository;
 import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
+import com.rcyc.batchsystem.util.Constants;
 
 public class ExcursionWriter implements ItemWriter<DefaultPayLoad<ExcursionVoyage, Object, ExcursionVoyage>>{
 private Long jobId;
@@ -38,15 +39,16 @@ private Long jobId;
 
     @Override
     public void write(List<? extends DefaultPayLoad<ExcursionVoyage, Object, ExcursionVoyage>> items) throws Exception {
-        elasticService.createIndex("excursion_voyage_demo");
-        elasticService.truncateIndexData("excursion_voyage_demo");
+        elasticService.createIndex(Constants.EXCURSION_DEMO_INDEX);
+        elasticService.createIndex(Constants.EXCURSION_INDEX);
+        elasticService.truncateIndexData(Constants.EXCURSION_DEMO_INDEX);
         System.out.println("Excursion Voyage writer");
         for (DefaultPayLoad<ExcursionVoyage, Object, ExcursionVoyage> payload : items) {
             List<ExcursionVoyage> excursionVoyages = (List<ExcursionVoyage>) payload.getResponse();
             if (excursionVoyages != null) {
                 System.out.println("From Excursion writer >>" + excursionVoyages.size());
                 try {
-                    elasticService.bulkInsertExcursionVoyages(excursionVoyages, "excursion_voyage_demo");
+                    elasticService.bulkInsertExcursionVoyages(excursionVoyages, Constants.EXCURSION_DEMO_INDEX);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

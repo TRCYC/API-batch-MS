@@ -36,6 +36,18 @@ public class Constants {
     public static final String PRICING_INDEX ="pricing";
     public static final String PRICING_DEMO_INDEX ="pricing_demo";
 
+    public static final String VOYAGE ="Voyage";
+    public static final String VOYAGE_INDEX ="voyage";
+    public static final String VOYGAE_DEMO_INDEX ="voyage_demo";
+
+    public static final String TRANSFER ="Transfer";
+    public static final String TRANSFER_INDEX ="transfer";
+    public static final String TRNASFER_DEMO_INDEX ="transfer_demo";
+
+    public static final String EXCURSION ="Excursion";
+    public static final String EXCURSION_INDEX ="excursionVoyage";
+    public static final String EXCURSION_DEMO_INDEX ="excursionVoyage_demo";
+
     public static boolean evaluateExpression(String expression) {
         // Very basic evaluator supporting '>' only
         if (expression.contains(">")) {

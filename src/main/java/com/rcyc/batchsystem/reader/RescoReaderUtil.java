@@ -7,10 +7,12 @@ import com.rcyc.batchsystem.model.resco.ResListEvent;
 import com.rcyc.batchsystem.service.RescoClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors; 
 
 public class RescoReaderUtil {
     public static List<ResListCategory> fetchCategoriesForCurrencies(
@@ -41,24 +43,45 @@ public class RescoReaderUtil {
             RescoClient rescoClient,
             List<FeedDateRangeEntity> dateRanges,
             String[] currencies) {
-        ResListEvent resListEvent = rescoClient.getAllVoyages(1);
-        List<EventDetail> eventList = resListEvent.getEventList();
-        FeedDateRangeEntity dateRangeEntity = dateRanges.get(0);
+            ResListEvent resListEvent = rescoClient.getAllVoyages(1);
+            List<EventDetail> eventList = resListEvent.getEventList();
+            FeedDateRangeEntity dateRangeEntity = dateRanges.get(0);
+            System.out.println("Fetching Categorries by Currency");
+            ConcurrentHashMap<String, List<ResListCategory>> concurrentMap =
+            Arrays.asList(currencies).parallelStream()
+                    .collect(Collectors.toConcurrentMap(
+                            currency -> currency,
+                            currency -> eventList.parallelStream()
+                                    .filter(event -> dateRangeEntity.isBegDateOnOrAfterStartAt(event.getBegDate()))
+                                    .map(event -> {
+                                        ResListCategory resListCategory = rescoClient.getSuiteByCurrency(currency,
+                                                String.valueOf(event.getEventId()), 1);
+                                        resListCategory.setCruiseCode(event.getCode());
+                                        return resListCategory;
+                                    })
+                                    .collect(Collectors.toList()),
+                            (list1, list2) -> list1,  
+                            ConcurrentHashMap::new      
+                    ));
+ 
+    Map<String, List<ResListCategory>> currencyCategoryMap = new HashMap<>(concurrentMap);
 
-        Map<String, List<ResListCategory>> currencyCategoryMap = new HashMap<>();
+    return currencyCategoryMap;
 
-        for (String currency : currencies) {
-            List<ResListCategory> categoryResponses = eventList.parallelStream()
-                    .filter(event -> dateRangeEntity.isBegDateOnOrAfterStartAt(event.getBegDate()))
-                    .map(event -> {
-                        ResListCategory resListCategory = rescoClient.getSuiteByCurrency(currency,
-                                String.valueOf(event.getEventId()), 1);
-                        resListCategory.setCruiseCode(event.getCode());
-                        return resListCategory;
-                    })
-                    .collect(Collectors.toList());
-            currencyCategoryMap.put(currency, categoryResponses);
-        }
-        return currencyCategoryMap;
+        // Map<String, List<ResListCategory>> currencyCategoryMap = new HashMap<>();
+
+        // for (String currency : currencies) {
+        //     List<ResListCategory> categoryResponses = eventList.parallelStream()
+        //             .filter(event -> dateRangeEntity.isBegDateOnOrAfterStartAt(event.getBegDate()))
+        //             .map(event -> {
+        //                 ResListCategory resListCategory = rescoClient.getSuiteByCurrency(currency,
+        //                         String.valueOf(event.getEventId()), 1);
+        //                 resListCategory.setCruiseCode(event.getCode());
+        //                 return resListCategory;
+        //             })
+        //             .collect(Collectors.toList());
+        //     currencyCategoryMap.put(currency, categoryResponses);
+        // }
+        // return currencyCategoryMap;
     }
 }

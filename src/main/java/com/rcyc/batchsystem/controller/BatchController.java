@@ -105,10 +105,10 @@ public class BatchController {
         return "Pricing job triggered!";
     }
 
-    @GetMapping("/run-voyage-job")
-    public String voyageJob() throws Exception {
+    @GetMapping("/run-voyage-job{jobId}")
+    public String voyageJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(voyageJob, params);
         return "Voyage job triggered!";
