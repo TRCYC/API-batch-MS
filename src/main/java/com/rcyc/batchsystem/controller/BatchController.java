@@ -90,16 +90,16 @@ public class BatchController {
     @GetMapping("/run-hotel-job/{jobId}")
     public String hotelJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
-                 .addLong("jobId", jobId)
+                .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(hotelJob, params);
         return "Hotel job triggered!";
     }
 
-    @GetMapping("/run-pricing-job")
-    public String pricingJob() throws Exception {
+    @GetMapping("/run-pricing-job/{jobId}")
+    public String pricingJob(@PathVariable Long jobId) throws Exception {
         JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("jobId", jobId)
                 .toJobParameters();
         jobLauncher.run(pricingJob, params);
         return "Pricing job triggered!";

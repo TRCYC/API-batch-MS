@@ -11,9 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 import com.rcyc.batchsystem.model.resco.Rate;
 import com.rcyc.batchsystem.model.resco.TravelerFee;
+import com.rcyc.batchsystem.service.AuditService;
 
-@Component
+
 public class PricingProcessor {
+
+    private AuditService auditService;
+    private Long jobId;
+
+    public PricingProcessor(AuditService auditService,Long jobId){
+        this.auditService = auditService;
+        this.jobId = jobId;
+    }
+
     public ItemProcessor<DefaultPayLoad<Pricing, Object, Pricing>, DefaultPayLoad<Pricing, Object, Pricing>> pricingProcessForWrite() {
         return item -> {
             System.out.println(item);

@@ -32,9 +32,7 @@ public class PortBatchJob {
     @Autowired
     private AuditService auditService;
     @Autowired
-    private ElasticService elasticService;
-    // @Autowired
-    // private PortRepository portRepository;
+    private ElasticService elasticService; 
     @Autowired
     private ScheduledJobService scheduledJobService;
     @Autowired

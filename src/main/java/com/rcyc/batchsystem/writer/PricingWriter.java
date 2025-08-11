@@ -5,15 +5,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.rcyc.batchsystem.model.elastic.Pricing;
 import com.rcyc.batchsystem.model.job.DefaultPayLoad;
+import com.rcyc.batchsystem.service.AuditService;
 import com.rcyc.batchsystem.service.ElasticService;
 
 import java.util.List;
 
-@Component
+
 public class PricingWriter implements ItemWriter<DefaultPayLoad<Pricing, Object, Pricing>> {
    
-    @Autowired
+    
     private ElasticService elasticService;
+    private AuditService auditService;
+    private Long jobId;
+
+    public PricingWriter(AuditService auditService, ElasticService elasticService, Long jobId) {
+        this.elasticService = elasticService;
+        this.auditService = auditService;
+        this.jobId = jobId;
+    }
 
     @Override
     public void write(List<? extends DefaultPayLoad<Pricing, Object, Pricing>> items) throws Exception {
