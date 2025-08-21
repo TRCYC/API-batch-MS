@@ -13,10 +13,15 @@ public class Constants {
     public static final String PORT_DEMO_INDEX = "port_demo";
 
     public static final String SUCCESS = "Success";
-    public static final String CMS_BASE_URL="https://qm1gatewayapi.ritzcarltonyachtcollection.com/cms-content/"; //System.getenv("CMS_BASE_URL");
+    public static final String CMS_BASE_URL=System.getenv("CMS_BASE_URL");//"https://qm1gatewayapi.ritzcarltonyachtcollection.com/cms-content/"; //System.getenv("CMS_BASE_URL");
 
     //public static final String SCHEDULER_API_TEMP = "https://dev3gatewayapi.ritzcarltonyachtcollection.com/rcyc-scheduler";
-    public static final String SCHEDULER_API_TEMP = "http://localhost:8090";
+    public static final String SCHEDULER_API_TEMP = "http://localhost:8090"; 
+    public static final String RESCO_API = CryptoUtil.decrypt(System.getenv("RESCO_APIURL")); 
+
+    public static final String RECO_USERNAME = CryptoUtil.decrypt(System.getenv("RESCO_USERNAME")); 
+    public static final String RECO_PASSWORD = CryptoUtil.decrypt(System.getenv("RESCO_PASSWORD")); 
+    public static final String ELASTIC_BASE_IP =  System.getenv("ELASTIC_BASE_IP"); //54.241.192.168
 
     public static final int DELAY_IN_MINUTES =1;
 

@@ -31,6 +31,7 @@ import com.rcyc.batchsystem.model.resco.ResListItinerary;
 import com.rcyc.batchsystem.model.resco.ResListLocation;
 import com.rcyc.batchsystem.model.resco.User;
 import com.rcyc.batchsystem.reader.RegionApiReader;
+import com.rcyc.batchsystem.util.Constants;
 import com.rcyc.batchsystem.model.resco.ReqListCategory;
 import com.rcyc.batchsystem.model.resco.ResListCategory;
 
@@ -43,11 +44,12 @@ public class RescoClient {
     @Autowired
     private RestTemplate restCustomTemplate;
 
+    private final String rescoAPI = Constants.RESCO_API;
+
     public ResListDictionary getAllRegions() {
         Dictionary dictionary = new Dictionary("RGN", 0);
         ReqListDictionary req = new ReqListDictionary(getUser(), dictionary);
-        ResListDictionary response = restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx", req,
+        ResListDictionary response = restTemplate.postForObject(rescoAPI, req,
                 ResListDictionary.class);
         System.out.println(response.toString());
         return response;
@@ -55,8 +57,7 @@ public class RescoClient {
 
     public ResListLocation getAllPorts(String type) {
         ReqListLocation reqListLocation = new ReqListLocation(getUser(), new Location(0, type));
-        ResListLocation response = restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+        ResListLocation response = restTemplate.postForObject(rescoAPI,
                 reqListLocation, ResListLocation.class);
         System.out.println(response.toString());
         return response;
@@ -68,8 +69,7 @@ public class RescoClient {
         reqListEvent.setAvailability(new Availability(0));
         reqListEvent.setEvent(new Event(disabled));
         reqListEvent.setFacility(new Facility("O"));
-        ResListEvent resListEvent = restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+        ResListEvent resListEvent = restTemplate.postForObject(rescoAPI,
                 reqListEvent, ResListEvent.class);
         return resListEvent;
     }
@@ -77,8 +77,7 @@ public class RescoClient {
 
     public ResListEvent getHotels(ReqListEvent reqListEvent) {
         System.out.println("Resco calling For Hotel");
-        ResListEvent resListEvent = restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+        ResListEvent resListEvent = restTemplate.postForObject(rescoAPI,
                 reqListEvent,
                 ResListEvent.class);
         System.out.println("Resco response completed >> " + resListEvent.getEventList().size());
@@ -89,8 +88,7 @@ public class RescoClient {
         ReqListItinerary reqListItinerary = new ReqListItinerary();
         reqListItinerary.setUser(getUser());
         reqListItinerary.setItinerary(new Itinerary(eventId));
-        ResListItinerary response = restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+        ResListItinerary response = restTemplate.postForObject(rescoAPI,
                 reqListItinerary, ResListItinerary.class);
         System.out.println(response.toString());
         return response;
@@ -102,8 +100,7 @@ public class RescoClient {
         Itinerary itinerary = new Itinerary();
         itinerary.setFacilityId(facilityId);
         reqListItinerary.setItinerary(itinerary);
-        ResListItinerary response = restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+        ResListItinerary response = restTemplate.postForObject(rescoAPI,
                 reqListItinerary, ResListItinerary.class);
         System.out.println(response.toString());
         return response;
@@ -124,8 +121,7 @@ public class RescoClient {
         req.setCategory(category);
         req.setRate(rate);
 
-        return restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+        return restTemplate.postForObject(rescoAPI,
                 req,
                 ResListCategory.class);
     }
@@ -146,7 +142,7 @@ public class RescoClient {
         req.setCategory(category);
 
         return restTemplate.postForObject(
-                "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+                rescoAPI,
                 req,
                 ResListCategory.class
         );
@@ -168,8 +164,7 @@ public class RescoClient {
 			reqListItem.setItem(item);
 			try {
 				// convertToXml(reqListItem);
-				response = restCustomTemplate.postForObject(
-						"https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+				response = restCustomTemplate.postForObject(rescoAPI,
 						reqListItem, ResListItem.class);
 
 				if (response != null) {
@@ -189,7 +184,7 @@ public class RescoClient {
 	}
   
     private User getUser() {
-        return new User("webapiprod1", "theGr8tw1de0pen#305");
+        return new User(Constants.RECO_USERNAME, Constants.RECO_PASSWORD);
     }
 
     public ResListItem getExcursionByVoyage(String eventId) {
@@ -214,8 +209,7 @@ public class RescoClient {
             reqListItem.setEvent(event);
             reqListItem.setItem(item);
             logger.info("Calling Resco for Excursion voyage "+ eventId);
-            response = restTemplate.postForObject(
-                    "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+            response = restTemplate.postForObject(rescoAPI,
                     reqListItem, ResListItem.class);
 
         } catch (Exception e) {
@@ -242,8 +236,7 @@ public class RescoClient {
             reqListItem.setEvent(event);
             reqListItem.setItem(item);
 
-            response = restTemplate.postForObject(
-                    "https://stgwebapi.ritz-carltonyachtcollection.com/rescoweb/ResWebConvert/InterfaceResco.aspx",
+            response = restTemplate.postForObject(rescoAPI,
                     reqListItem, ResListItem.class);
         } catch (Exception e) {
             e.printStackTrace();
